@@ -1,0 +1,129 @@
+
+cat("*************  Examples  Using TSdbi*************\n")
+
+cat("**************        with ts\n")
+
+ # this prevents problems is series remains from a previous tests
+ dbGetQuery(con, "DELETE FROM Meta WHERE id IN ('Series 1', 'vec', 'matc1', 'matc2', 'mat2c1', 'mat2c2');") 
+
+ z <- ts(matrix(rnorm(10),10,1), start=c(1990,1), frequency=1)
+ TSput(z, serIDs="Series 1", con) # test name with a space
+ z <- TSget("Series 1", con)
+ TSreplace(z, serIDs="Series 1", con, TSdescription="a", TSdoc="b")
+ z <- TSget("Series 1", con)
+ if(1e-10 < max(abs(c(z) - c(TSget("Series 1", con))))) stop("Series1 error.")
+
+ z <- ts(rnorm(10), start=c(1990,1), frequency=1)
+ seriesNames(z) <- "vec"
+ TSput( z, con)
+ TSget("vec", con)
+ if(1e-10 < max(abs(c(z) - c(TSget("vec", con))))) stop("vec error.")
+
+ z <- ts(matrix(rnorm(20),10,2), start=c(1990,1), frequency=1)
+ seriesNames(z) <- c("matc1", "matc2")
+ TSput(z, con)
+ TSget("matc1", con)
+ TSget("matc2", con)
+ TSget(c("matc1","matc2"), con)
+ tfplot(z, TSget(c("matc1","matc2"), con))
+ if(1e-10 < max(abs(c(z) - c(TSget(c("matc1","matc2"), con))))) stop("mat error.")
+
+ z <- ts(matrix(rnorm(20),10,2), start=c(1990,1), frequency=4)
+  seriesNames(z) <- c("matc1", "matc2")
+ TSreplace(z, con)
+ TSget(c("matc1","matc2"), con)
+ tfplot(z, TSget(c("matc1","matc2"), con))
+ if(1e-10 < max(abs(c(z) - c(TSget( c("matc1","matc2"), con))))) stop("mat f=4 error.")
+
+
+ z <- ts(matrix(rnorm(200),100,2), start=c(1995,1), frequency=12)
+  seriesNames(z) <- c("mat2c1", "mat2c2")
+ TSput(z, con)
+ TSget(c("mat2c1","mat2c2"), con)
+ tfplot(z, TSget(c("mat2c1","mat2c2"), con))
+ if(1e-10 < max(abs(c(z) - c(TSget(c("mat2c1","mat2c2"), con))))) stop("mat2 f=12 error.")
+ 
+ 
+ options(TSconnection=con)
+ TSmeta("mat2c1", con)
+ TSmeta("mat2c1")
+ 
+ TSdelete("mat2c1", con)
+ TSdelete("mat2c2")
+
+if (require("zoo") ) {
+ cat("**************        with zoo\n")
+
+ z <- zoo(matrix(rnorm(200),100,2), as.Date("1990-01-01") + 0:99)
+  seriesNames(z) <- c("zooc1", "zooc2")
+ TSput(z, con, Table="D")
+ TSget(c("zooc1","zooc2"), con)
+# zoo bug   tfplot(z, TSget(c("zooc1","zooc2"), con))  
+ tfplot(z)
+ tfplot(TSget(c("zooc1","zooc2"), con))
+ if(1e-8 < max(abs(c(z) - c(TSget(c("zooc1","zooc2"), con))))) stop("zoo  error.")
+
+ z <- zoo(matrix(rnorm(200),100,2), as.Date("1990-01-01") + 0:99 * 7)
+  seriesNames(z) <- c("zooWc1", "zooWc2")
+ TSput(z, con, Table="W")
+ TSget(c("zooWc1","zooWc2"), con)
+# zoo bug  tfplot(z, TSget(c("zooWc1","zooWc2"), con), col=c("black", "red"),
+# lty=c("dashed", "solid"))  
+ if(1e-8 < max(abs(c(z) - c(TSget(c("zooWc1","zooWc2"), con))))) stop("zooW  error.")
+ }
+ 
+conets <- try(TSconnect(m, dbname="ets")) 
+if(! inherits(conets, "try-error")) {
+
+  cat("**************        with ets\n")
+  options(TSconnection=conets)
+
+  TSmeta("M.SDR.CCUSMA02.ST")
+
+  EXCH.IDs <- t(matrix(c(
+ 	"M.SDR.CCUSMA02.ST",	 "SDR/USD exchange rate",
+ 	"M.CAN.CCUSMA02.ST",	 "CAN/USD exchange rate",
+ 	"M.MEX.CCUSMA02.ST",	 "MEX/USD exchange rate",
+ 	"M.JPN.CCUSMA02.ST",	 "JPN/USD exchange rate",
+ 	"M.EMU.CCUSMA02.ST",	 "Euro/USD exchange rate",
+ 	"M.OTO.CCUSMA02.ST",	 "OECD /USD exchange rate",
+ 	"M.G7M.CCUSMA02.ST",	 "G7   /USD exchange rate",
+ 	"M.E15.CCUSMA02.ST",	 "Euro 15. /USD exchange rate"
+	), 2, 8))
+
+  TSdates(EXCH.IDs[,1], conets)
+  TSdates(EXCH.IDs[,1])
+  z <- TSdates(EXCH.IDs[,1], conets)
+  start(z)
+  end(z)
+   
+  tfplot(TSget(serIDs="B103", conets))
+
+  TSdescription(TSget("B103", conets, TSdescription=TRUE))
+  TSdescription("B103", conets)
+  TSdescription("B103")
+
+  TSdoc(TSget("B103", conets, TSdoc=TRUE))
+  TSdoc("B103", conets)
+  TSdoc("B103")
+
+  tfplot(TSget("B103", names="B103", conets))
+
+  z <- TSget("B103", conets, TSdescription=TRUE)
+  tfplot(z, Title=TSdescription(z))
+
+  # SDSP500	DAILY	\N	S&P/TSX Volatility	SDSP500
+  z <- TSget("SDSP500", conets, TSdescription=TRUE)
+  tfplot(z, Title=TSdescription(z))
+  plot(z)
+
+  z <- TSget(c("DSP500","SDSP500"), conets, TSdescription=TRUE)
+  tfplot(z, xlab=TSdescription(z))
+  plot(z)
+  
+  ETSgdp    <- annualizedGrowth(aggregate(TSget("V1992067", conets),
+                   nfrequency=4,FUN=mean), lag=4, names="GDP Y/Y Growth")
+  
+  cat("**************        disconnecting ets\n")
+  dbDisconnect(conets)
+  }  # ets

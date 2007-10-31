@@ -1,0 +1,177 @@
+# Before starting R you need to set user/passwd/host in ~/.my.cnf
+#  and you must have 
+
+cat("Example creating tables for different time series.\n")
+
+# Set up Metadata table  Meta.
+
+if(dbExistsTable(con, "Meta")) dbRemoveTable(con, "Meta")
+
+dbGetQuery(con, "create table Meta (
+   id          VARCHAR(40) NOT NULL,
+   tbl         CHAR(1), 
+   refPeriod   VARCHAR(10) default NULL,
+   description   TEXT,
+   documentation     TEXT,
+   PRIMARY KEY (id)
+   );")
+dbGetQuery(con, "CREATE INDEX Metaindex_tbl ON Meta (tbl);")
+
+# Set up annual table  A.
+
+if(dbExistsTable(con, "A")) dbRemoveTable(con, "A")
+
+dbGetQuery(con, "create table A (
+   id	      VARCHAR(40),
+   year	      INT,
+   v    double DEFAULT  NULL
+   );")
+dbGetQuery(con, "CREATE INDEX Aindex_id     ON A (id);")
+dbGetQuery(con, "CREATE INDEX Aindex_year   ON A (year);")
+
+# Set up business table  B .
+
+if(dbExistsTable(con, "B")) dbRemoveTable(con, "B")
+
+dbGetQuery(con, "create table B (
+   id	      VARCHAR(40),
+   date	      DATE,
+   period     INT,
+   v    double DEFAULT  NULL
+   );")
+dbGetQuery(con, "CREATE INDEX Bindex_id     ON B (id);")
+dbGetQuery(con, "CREATE INDEX Bindex_date   ON B (date);")
+dbGetQuery(con, "CREATE INDEX Bindex_period ON B (period);")
+
+
+# Set up daily table  D .
+
+if(dbExistsTable(con, "D")) dbRemoveTable(con, "D")
+
+dbGetQuery(con, "create table D (
+   id	      VARCHAR(40),
+   date	      DATE,
+   period     INT,
+   v    double DEFAULT  NULL
+   );")
+dbGetQuery(con, "CREATE INDEX Dindex_id     ON D (id);")
+dbGetQuery(con, "CREATE INDEX Dindex_date   ON D (date);")
+dbGetQuery(con, "CREATE INDEX Dindex_period ON D (period);")
+
+
+# Set up monthly table  M.
+
+if(dbExistsTable(con, "M")) dbRemoveTable(con, "M")
+
+dbGetQuery(con, "create table M (
+   id	      VARCHAR(40),
+   year	      INT,
+   period     INT,  
+   v    double DEFAULT  NULL
+   );")
+dbGetQuery(con, "CREATE INDEX Mindex_id     ON M (id);")
+dbGetQuery(con, "CREATE INDEX Mindex_year   ON M (year);")
+dbGetQuery(con, "CREATE INDEX Mindex_period ON M (period);")
+
+# Set up minutely table  U .
+
+if(dbExistsTable(con, "U")) dbRemoveTable(con, "U")
+
+ # tz not tested yet. Not sure about period.  
+ dbGetQuery(con, "create table U (
+   id	      VARCHAR(40),
+   date	      DATETIME,
+   tz         VARCHAR(4),    
+   period     INT,         
+   v    double DEFAULT  NULL
+   );")
+dbGetQuery(con, "CREATE INDEX Uindex_id     ON U (id);")
+dbGetQuery(con, "CREATE INDEX Uindex_date   ON U (date);")
+dbGetQuery(con, "CREATE INDEX Uindex_period ON U (period);")
+
+
+# Set up quaterly table  Q.
+
+if(dbExistsTable(con, "Q")) dbRemoveTable(con, "Q")
+
+dbGetQuery(con, "create table Q (
+   id	      VARCHAR(40),
+   year	      INT,
+   period     INT,  
+   v    double DEFAULT  NULL
+   );")
+dbGetQuery(con, "CREATE INDEX Qindex_id     ON Q (id);")
+dbGetQuery(con, "CREATE INDEX Qindex_year   ON Q (year);")
+dbGetQuery(con, "CREATE INDEX Qindex_period ON Q (period);")
+
+# Set up semiannual table  S .
+
+if(dbExistsTable(con, "S")) dbRemoveTable(con, "S")
+ 
+dbGetQuery(con, "create table S (
+   id	      VARCHAR(40),
+   year	      INT,
+   period     INT,  
+   v    double DEFAULT  NULL
+   );")
+dbGetQuery(con, "CREATE INDEX Sindex_id     ON S (id);")
+dbGetQuery(con, "CREATE INDEX Sindex_year   ON S (year);")
+dbGetQuery(con, "CREATE INDEX Sindex_period ON S (period);")
+
+# Set up weekly table  W .
+
+if(dbExistsTable(con, "W")) dbRemoveTable(con, "W")
+
+dbGetQuery(con, "create table W (
+   id	      VARCHAR(40),
+   date	      DATE,
+   period     INT,  
+   v    double DEFAULT  NULL
+   );")
+dbGetQuery(con, "CREATE INDEX Windex_id     ON W (id);")
+dbGetQuery(con, "CREATE INDEX Windex_date   ON W (date);")
+dbGetQuery(con, "CREATE INDEX Windex_period ON W (period);")
+
+# Set up irregular date table  I .
+
+if(dbExistsTable(con, "I")) dbRemoveTable(con, "I")
+
+dbGetQuery(con, "create table I (
+   id	      VARCHAR(40),
+   date	      DATE,
+   v    double DEFAULT  NULL
+   );")
+dbGetQuery(con, "CREATE INDEX Iindex_id     ON I (id);")
+dbGetQuery(con, "CREATE INDEX Iindex_date   ON I (date);")
+
+
+
+# Set up irregular date-time table  T .
+# IT WOULD BE NICE TO HAVE TZ HERE TOO
+
+if(dbExistsTable(con, "T")) dbRemoveTable(con, "T")
+
+dbGetQuery(con, "create table T (
+   id    VARCHAR(40),
+   date  DATETIME,
+   v     double DEFAULT  NULL
+   );")
+dbGetQuery(con, "CREATE INDEX Tindex_id   ON T (id);")
+dbGetQuery(con, "CREATE INDEX Tindex_date ON T (date);")
+
+cat("   tables created:\n")
+print(dbListTables(con))
+
+#  This is generic sql way to get table info. (eg. table A )
+#   but it requires read privileges on INFORMATION_SCHEMA.Columns
+#   which the user may not have.
+
+if( "SQLiteConnection" != class(con)) { #SQLite does not seem to support this
+  z <- try(
+  dbGetQuery(con, "SELECT COLUMN_NAME, COLUMN_DEFAULT, COLLATION_NAME, DATA_TYPE,
+         CHARACTER_SET_NAME, CHARACTER_MAXIMUM_LENGTH, NUMERIC_PRECISION
+            FROM INFORMATION_SCHEMA.Columns WHERE table_name='A' ;"), silent=TRUE )
+  if(inherits(z, "try-error")) warning(
+    "INFORMATION_SCHEMA query error. User may not have permission. Message: ", z)
+  else print(z)
+ }
