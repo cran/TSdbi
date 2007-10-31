@@ -1,0 +1,65 @@
+import(methods)  
+import(DBI)      
+#importFrom("stats", "tsp")
+import("tframe")
+importFrom("stats", "start")
+importFrom("stats", "end")
+
+## not generic
+export(
+  "TSreplace",
+  "TSfinddb",
+  "TSseriesIDs",
+  "TScon",
+  "TSextractionDate"
+  )
+
+## S4 Classes
+exportClasses(
+   "TSdbOptions",
+   "TSmeta"
+   )
+
+## S4 generics
+export(
+   "print",
+   "show",
+   "TSconnect",
+   "TSget",
+   "TSput",
+   "TSdelete",
+   "TSreplace",
+   "TSdates",
+   "TSexists",
+   "TSdescription",
+   "TSdescription<-",
+   "TSdoc",
+   "TSdoc<-",
+   "TSmeta",
+   "TSmeta<-",
+   "TSrefPeriod",
+   "TSrefPeriod<-" 
+   )
+
+## S4 methods
+exportMethods(
+   "print",
+   ## "dbConnect", # generic from DBI
+   "TSconnect",
+   "TSget",
+   "TSput",
+   "TSdelete",
+   "TSreplace",
+   "TSmeta",
+   "TSdates",
+   "TSdescription",
+   "TSdoc"
+   )
+
+#S3method("print","TSmeta")
+S3method("print","TSdates")
+S3method("start","TSdates")
+S3method("tfstart","TSdates")
+S3method("end","TSdates")
+S3method("tfend","TSdates")
+

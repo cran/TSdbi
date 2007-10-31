@@ -1,0 +1,39 @@
+   (See  TO DO below, and also the separate README file.)
+   
+KNOWN BUGS
+
+    o None for the moment (but see TO DO).
+
+CHANGES IN TSdbi VERSION 2007.10-1
+
+    o This is an beta version.
+
+
+
+TO DO
+
+- The immediate extension already in progress is a mechanism for (optionally)
+  allowing different vintages and panels of the data series. (e.g.
+  series with the same identifier but a different release date or country).
+
+- a mechanism for handling aliases for series names.
+
+- an RODBC database plugin
+
+- an R postgresql database plugin 
+
+- a direct fame database plugin (Fame through padi works, but is read only)
+
+- optionally different time series representations.
+
+- write better vignettes (from tests)
+
+- rollback meta when data put fails
+
+- put (write) other representations of ts
+
+- multilingual documentation
+
+- mechanism for signaling series updates to users
+
+- extend to series constructed from different SQL field formats.

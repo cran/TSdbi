@@ -1,0 +1,22 @@
+\documentclass[english]{article}
+\begin{document}
+
+%\VignetteIndexEntry{TSdbi Guide}
+\SweaveOpts{eval=TRUE,echo=TRUE,results=hide,fig=FALSE}
+\begin{Scode}{echo=FALSE,results=hide}
+ options(continue="  ")
+\end{Scode}
+
+\section{TSdbi Functions}
+In R, the functions in this package are made available with
+
+\begin{Scode}
+library("TSdbi") 
+\end{Scode}
+
+The TSdbi package provides the common parts of an interface to tie series
+databases. To use this package it is necessary to also have one of the database
+specific packages, such as  TSMySQL, TSSQLite, or TSpadi. More extensive
+vignette examples are provided in each of those packages. (The vignettes are
+similar, but do not build without one of the database specific packages.)
+\end{document}

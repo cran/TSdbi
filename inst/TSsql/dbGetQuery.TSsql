@@ -1,0 +1,52 @@
+cat("database tables:\n")
+print(dbListTables(con))
+
+
+cat("**************  Examples Using dbGetQuery\n")
+
+# This is Mysql specific . Below is a generic sql way to do this.
+# dbGetQuery(con, "show tables;")
+# dbGetQuery(con, "describe A;")
+# dbGetQuery(con, "describe B;")
+# dbGetQuery(con, "describe D;")
+# dbGetQuery(con, "describe M;")
+# dbGetQuery(con, "describe Meta;")
+# dbGetQuery(con, "describe U;")
+# dbGetQuery(con, "describe Q;")
+# dbGetQuery(con, "describe S;")
+# dbGetQuery(con, "describe W;")
+
+# check if schema query is supported.
+z <- try(dbGetQuery(con, paste(
+       "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.Columns ",
+       " WHERE TABLE_SCHEMA='test' AND table_name='A' ;")))
+
+if (inherits(z, "try-error") ) warning("skipping TABLE_SCHEMA queries")  else {
+
+#  This is generic sql way to get table info.
+print(dbGetQuery(con, paste(
+       "SELECT COLUMN_NAME, COLUMN_DEFAULT, COLLATION_NAME, DATA_TYPE,",
+       "CHARACTER_SET_NAME, CHARACTER_MAXIMUM_LENGTH, NUMERIC_PRECISION",
+ "FROM INFORMATION_SCHEMA.Columns WHERE TABLE_SCHEMA='test' AND table_name='A' ;")))
+
+print(dbGetQuery(con, paste(
+   "SELECT COLUMN_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH, NUMERIC_PRECISION",
+ "FROM INFORMATION_SCHEMA.Columns WHERE TABLE_SCHEMA='test' AND table_name='M';")))
+
+}
+
+#  dbGetQuery(con, "SELECT 'rows in M ', COUNT(id) FROM M ;")
+#  dbGetQuery(con, "SELECT 'series in M ', COUNT(DISTINCT(id)) FROM M ;")
+
+conets <- try(TSconnect(m, dbname="ets")) 
+if(! inherits(conets, "try-error")) {
+
+  cat("**************        dbGetQuery with ets\n")
+
+  print(dbGetQuery(conets, "SELECT description FROM Meta WHERE id = 'B103';"))
+  print(dbGetQuery(conets, "SELECT documentation   FROM Meta WHERE id = 'B103';"))
+
+  cat("**************        disconnecting ets\n")
+  dbDisconnect(conets)
+  }
+  

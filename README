@@ -1,0 +1,59 @@
+(This is an beta version.)
+
+TSdbi attempts to provide a common R interface (API) to time series databases. 
+It also helps provide some backend implementations of SQL tables, etc., and an 
+interface to Fame . The currently available versions of backends
+include MySQL, SQLite, and Fame through the padi interface. 
+
+It should be fairly simple to implement any SQL database having a DBI package
+plug (e.g. ROracle and Rpostgresql when that is available). I believe it should 
+be possible to implement with RODBC, but have not tried that yet, and
+it should be possible to implement with the R fame package directly. (If anyone 
+is interested in working on any of these, please contact me for additional 
+hints.)
+
+The current implementation supports annual, quarterly, monthly, semiannual, 
+weekly, daily, business day, minutely, irregular data with a date, and irregular 
+data with a date and time. This may be constrained by the backend (e.g. Fame
+does not support all these types.)  My own work tends to be with the first
+three, so others have not been tested as extensively.  It should be relatively
+easy to implement other types of time series data in the SQL 
+backends (suggestions and examples?).
+
+Series documentation is supported in a meta table. (Multilingual support is not
+yet implemented, but should not be too difficult.)
+
+The design also (optionally) supports vintages and panels of data (e.g.
+series with the same identifier but a different release date or country). This
+feature is actively under developement.
+
+The intention is that the R time series representation can optionally be
+specified, but currently only the default is working (ts were possible and zoo
+elsewhere).
+
+The TSdbi package provides the common parts of the interface. To use this 
+package it is necessary to also have one of the database specific packages, such
+as  TSMySQL, TSSQLite, or TSpadi. More extensive vignette examples are provided 
+in each of those packages. (The vignettes are very similar, but they will not 
+build properly without one of the database specific packages.)
+
+BULK LOADING
+
+For the SQL backends, tests and examples setup SQL tables using code in the
+file inst/TSsql/CreateTables.TSsql, and very small datasets are loaded into 
+these tables. 
+
+Loading large datasets using the R interface may be slow (I have not attempted).
+Performance for reading data seems fairly reasonable, at least in my
+test database of about 800,000 series, mostly monthly, quarterly and annual
+(but this may be small by financial data standards). 
+
+Typically one might load a large dataset using a database specific client 
+and the commands for loading a csv file or something similar. In this case 
+the tables can be setup with the database specific client, but the table 
+names and fields specified in inst/TSsql/CreateTables.TSsql should be respected.
+I am in the process of generalizing some of my scripts and Makefiles 
+to provide examples for this.
+
+
+See the TO DO section in the NEWS file for possible extensions.
