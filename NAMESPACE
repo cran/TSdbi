@@ -11,7 +11,8 @@ export(
   "TSfinddb",
   "TSseriesIDs",
   "TScon",
-  "TSextractionDate"
+  "TSextractionDate",
+  "TSquery"
   )
 
 ## S4 Classes
