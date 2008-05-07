@@ -1,0 +1,40 @@
+\documentclass[english]{article}
+\usepackage{/home/paul/toolchain/R/src/R-2.7.0/share/texmf/Sweave}
+\begin{document}
+#############################################################
+# This is to catch a bug in 2.7.0 
+
+\begin{Scode}
+# these tests are not really for TSdbi, but catch other potential problems 
+#  that might affect the TS db specific packages.
+
+require("methods")
+require("tools")
+
+setClassUnion("OptionalPOSIXct",   c("POSIXct",   "NULL"))
+
+setClass("TSmetax", 
+  representation(serIDs="character", ExtractionDate="OptionalPOSIXct" )) 
+
+setGeneric("TSmetax", 
+   def= function(x, ...) standardGeneric("TSmetax"))
+
+setMethod("TSmetax",   signature(x="character"),
+   definition= function(x, ...){
+       new("TSmetax", serIDs=x, ExtractionDate=Sys.time())
+       } )
+
+#warning("Test TSdbi/tests/S4checks.R temporarily disabled.")
+#z <- new("TSmetax", serIDs="whatever", ExtractionDate= Sys.time())
+#z
+
+z <- new("TSmetax", serIDs="whatever", ExtractionDate= NULL)
+print(z)
+
+show(z)
+
+str(z)
+#############################################################
+\end{Scode}
+#Sweave("tests/S4checks.R")
+\end{document}

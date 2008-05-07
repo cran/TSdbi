@@ -4,10 +4,18 @@ KNOWN BUGS
 
     o None for the moment (but see TO DO).
 
+CHANGES IN TSdbi VERSION 2008.5-1
+
+    o Work around for bug in R 2.7.0 
+
+    o Misc. clean up of beta. 
+
+    o vintages is working but not carefully tested. Panels may be working, but
+      not at all tested.
+
 CHANGES IN TSdbi VERSION 2007.10-1
 
     o This is an beta version.
-
 
 
 TO DO

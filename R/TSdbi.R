@@ -1,6 +1,8 @@
 .onLoad <- function(library, section) {require("methods")}
 
-setClassUnion("OptionalPOSIXct",   c("POSIXct",   "NULL"))
+#setClassUnion("OptionalPOSIXct",   c("POSIXct",   "NULL"))
+# bug work around
+setClassUnion("OptionalPOSIXct",   c("POSIXct",   "logical"))
 
 setClass("TSmeta", 
   representation(serIDs="character", dbname="character",
@@ -16,7 +18,7 @@ setGeneric("TSmeta",
 setMethod("TSmeta",   signature(x="character", con="ANY"),
    definition= function(x, con=options()$TSconnection, ...){
        new("TSmeta", serIDs=x, dbname=con@dbname, 
-               con=class(con), ExtractionDate=Sys.time(),
+               con=class(con), ExtractionDate=NA, #NULL, # bug in 2.7.0 =Sys.time(),
 	       TSdoc=TSdoc(x, con=con, ...),
                TSdescription=TSdescription(x, con=con, ...))
 	} )
@@ -30,7 +32,7 @@ setMethod("TSmeta",   signature(x="ANY", con="missing"),
    definition=  function(x, con, ...) {
       m <- attr(x, "TSmeta")
       if(is.null(m)) new("TSmeta",serIDs=seriesNames(x), 
-	         dbname="", con="", ExtractionDate=NULL,
+	         dbname="", con="", ExtractionDate=NA, #NULL,
 		 TSdescription="", TSdoc="") else m
       })
 
@@ -96,7 +98,7 @@ setWhere <- function(con, x, vintage, panel) {
      if(con@vintage) {
        if(is.null(vintage))	vintage <- "current" 
        if("current" == vintage) vintage <- dbGetQuery(con,
-   	   "SELECT vintage  FROM vintages WHERE alias='current';" )$vintage
+   	   "SELECT vintage  FROM vintageAlias WHERE alias='current';" )$vintage
        }
      where <-  paste(" WHERE id = '", x, "'", sep="")
      if(!is.null(vintage)) where <- paste(where, " AND vintage='", vintage, "'", sep="")
@@ -212,7 +214,7 @@ TSput.SQL <- function(x, serIDs=seriesNames(x), con, Table=NULL,
   if(con@vintage) {
     if(is.null(vintage))     vintage <- "current" 
     if("current" == vintage) vintage <- dbGetQuery(con,
-     	"SELECT vintage  FROM vintages WHERE alias='current';" )$vintage
+     	"SELECT vintage  FROM vintageAlias WHERE alias='current';" )$vintage
     }
   # M does the write to Meta, P writes values to data table.
 
@@ -486,7 +488,7 @@ TSget.SQL <- function(serIDs, con, TSrepresentation=options()$TSrepresentation,
   #TSsourceInfo(mat) <- new("TSsourceInfo", serIDs=serIDs, con=class(con), 
   #                        ExtractionDate= Sys.time()) 
   TSmeta(mat) <- new("TSmeta", serIDs=serIDs, dbname=con@dbname, 
-      con=class(con), ExtractionDate= Sys.time(), 
+      con=class(con), ExtractionDate=NA, # NULL,  # bug in 2.7.0 =Sys.time(), 
       TSdescription=if(TSdescription) desc else "", TSdoc=if(TSdoc) doc else "")
   mat
   }
