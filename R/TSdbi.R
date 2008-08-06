@@ -106,7 +106,7 @@ setWhere <- function(con, x, vintage, panel) {
      where
      }
 
-TSdescription.SQL <-  function(x=NULL, con=options()$TSconnection, 
+TSdescriptionSQL <-  function(x=NULL, con=options()$TSconnection, 
        vintage=options()$TSvintage, panel=options()$TSpanel, ...) {	    
             r <- dbGetQuery(con, paste("SELECT description  FROM Meta ", 
                        setWhere(con, x, vintage, panel), ";", sep=""))$description
@@ -138,7 +138,7 @@ setMethod("TSdoc",   signature(x="character", con="ANY"),
        if(is.null(con)) stop("NULL con is not allowed. See ?TSdoc.")
        else stop("con class ", class(con), " is not supported.")} )
 
-TSdoc.SQL <-  function(x=NULL, con=options()$TSconnection, 
+TSdocSQL <-  function(x=NULL, con=options()$TSconnection, 
        vintage=options()$TSvintage, panel=options()$TSpanel, ...) {
             if(1 < length(x)) stop("One series only for TSdoc")
             r <- dbGetQuery(con, paste("SELECT documentation  FROM Meta ", 
@@ -202,7 +202,7 @@ setMethod("TSput",   signature(x="ANY", serIDs="character", con="ANY"),
 
    
 
-TSput.SQL <- function(x, serIDs=seriesNames(x), con, Table=NULL,
+TSputSQL <- function(x, serIDs=seriesNames(x), con, Table=NULL,
        TSdescription.=TSdescription(x), TSdoc.=TSdoc(x),  
        vintage=options()$TSvintage, panel=options()$TSpanel, ...) {
 
@@ -360,7 +360,7 @@ setMethod("TSdelete",   signature(serIDs="character", con="ANY"),
        else stop("con class ", class(con), " is not supported.")} )
 
    
-TSdelete.SQL <- function(serIDs, con=options()$TSconnection,  
+TSdeleteSQL <- function(serIDs, con=options()$TSconnection,  
    vintage=options()$TSvintage, panel=options()$TSpanel, ...) {
        for (i in seq(length(serIDs))) {
            where <-  setWhere(con, serIDs[i], vintage, panel)
@@ -388,7 +388,7 @@ setMethod("TSget",   signature(serIDs="character", con="ANY"),
        else stop("con class ", class(con), " is not supported.")} )
 
 # next is not really a method, but it is called by methods for various SQL dbs.
-TSget.SQL <- function(serIDs, con, TSrepresentation=options()$TSrepresentation,
+TSgetSQL <- function(serIDs, con, TSrepresentation=options()$TSrepresentation,
        names=NULL, TSdescription=FALSE, TSdoc=FALSE,
        vintage=options()$TSvintage, panel=options()$TSpanel, ...) {
   # so far I think this is generic to all SQL.
@@ -511,7 +511,7 @@ setMethod("TSdates",   signature(serIDs="character", con="ANY"),
        if(is.null(con)) stop("NULL con is not allowed. See ?TSdates.")
        else stop("con class ", class(con), " is not supported.")} )
 
-TSdates.SQL <- function(serIDs, con,  
+TSdatesSQL <- function(serIDs, con,  
        vintage=options()$TSvintage, panel=options()$TSpanel, ...) {
   # so far I think this is generic to all SQL, but untested.
   r  <- av <- tb <- rP <- NULL

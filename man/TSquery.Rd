@@ -15,7 +15,6 @@
     \item{frequency}{character string used to specify frequency of the result
     (only "monthly" or "annual" are currently supported.}
     \item{con}{A database connection.}
-    \item{...}{Arguments passed to TSquery.SQL or other methods.}
 }
 \value{A time series or time series matrix.}
 \details{
@@ -30,7 +29,7 @@ generated with the function arguments. An example query might be something like
 }
 
 \seealso{ 
-\code{\link{TSquery}},
+\code{\link{TSget}},
 }
 \keyword{ts}
 

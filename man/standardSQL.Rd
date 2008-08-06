@@ -1,29 +1,29 @@
 \name{standardSQL}
-\alias{TSget.SQL}
-\alias{TSput.SQL}
-\alias{TSdates.SQL}
-\alias{TSdoc.SQL}
-\alias{TSdescription.SQL}
-\alias{TSdelete.SQL}
+\alias{TSgetSQL}
+\alias{TSputSQL}
+\alias{TSdatesSQL}
+\alias{TSdocSQL}
+\alias{TSdescriptionSQL}
+\alias{TSdeleteSQL}
 
 
 \title{Standard SQL Database Queries}
 \description{Standard SQL database queries}
 \usage{
-    TSget.SQL(serIDs, con, TSrepresentation=options()$TSrepresentation,
+    TSgetSQL(serIDs, con, TSrepresentation=options()$TSrepresentation,
        names=NULL, TSdescription=FALSE, TSdoc=FALSE,
        vintage=options()$TSvintage, panel=options()$TSpanel, ...)
 
-    TSdates.SQL(serIDs, con, 
+    TSdatesSQL(serIDs, con, 
        vintage=options()$TSvintage, panel=options()$TSpanel, ...)
-    TSdelete.SQL(serIDs, con=options()$TSconnection, 
+    TSdeleteSQL(serIDs, con=options()$TSconnection, 
        vintage=options()$TSvintage, panel=options()$TSpanel, ...) 
-    TSdoc.SQL(x=NULL, con=options()$TSconnection, 
+    TSdocSQL(x=NULL, con=options()$TSconnection, 
        vintage=options()$TSvintage, panel=options()$TSpanel, ...)
-    TSdescription.SQL(x=NULL, con=options()$TSconnection, 
+    TSdescriptionSQL(x=NULL, con=options()$TSconnection, 
        vintage=options()$TSvintage, panel=options()$TSpanel, ...)
 
-    TSput.SQL(x, serIDs=seriesNames(x), con,  Table=NULL,
+    TSputSQL(x, serIDs=seriesNames(x), con,  Table=NULL,
        TSdescription.=TSdescription(x), TSdoc.=TSdoc(x), 
        vintage=options()$TSvintage, panel=options()$TSpanel, ...)
 }
@@ -43,7 +43,7 @@
          determined automatically).}
     \item{vintage}{Vintage to be supplied (if supported by db).}
     \item{panel}{Panel to be supplied (if supported by db).}
-    \item{...}{Arguments passed to TSget.SQL or other methods.}
+    \item{...}{Arguments passed to TSgetSQL or other methods.}
 }
 \value{A time series matrix.}
 \details{
@@ -52,7 +52,7 @@ such as \pkg{TSMySQL} and \pkg{TSSQLite} that provide connections. These
 functions would usually not be called directly by the user.
 
 The functions are not exported from the namespace, so they should be refered to
-with the package name (e.g. \code{TSdbi:::TSget.SQL})
+with the package name (e.g. \code{TSdbi:::TSgetSQL})
 } 
 
 \seealso{ 

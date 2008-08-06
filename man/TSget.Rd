@@ -14,7 +14,7 @@
 \arguments{
     \item{con}{A database connection.}
     \item{serIDs}{identifiers for series to extract.}
-    \item{...}{Arguments passed to TSget.SQL or other methods.}
+    \item{...}{Arguments passed to TSgetSQL or other methods.}
 }
 \value{A time series matrix.}
 \details{
@@ -42,7 +42,7 @@ list of the various tables. ONLY THIS DEFAULT IS WORKING AT PRESENT.
 
 \code{names}, \code{TSrepresentation}, \code{TSdescription} and 
 \code{documentation} can also be specified as arguments.
-(Passed in \dots). See \code{\link{TSput.SQL}} for more details.
+(Passed in \dots). See \code{\link{TSputSQL}} for more details.
 }
 
 \seealso{ 

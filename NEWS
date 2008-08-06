@@ -4,9 +4,19 @@ KNOWN BUGS
 
     o None for the moment (but see TO DO).
 
+
+CHANGES IN TSdbi VERSION 2008.x-x
+
+    o adjusted TSquery to use standard sql extract(YEAR rather than mysql YEAR(.
+
+    o fixed bug in TSquery for case of a query returning only one period. 
+
+
 CHANGES IN TSdbi VERSION 2008.5-1
 
     o Work around for bug in R 2.7.0 
+
+    o Added TSquery (even though it is not logically part of this package). 
 
     o Misc. clean up of beta. 
 

@@ -11,8 +11,8 @@ if(require("tseries") &&  !inherits(
    plot(x)
    TSrefPeriod(x) <- "Close"
    if( ! TSput(x,  serIDs="gspc", con, Table="B",
-              TSdescription.="gspc  Close",
-	      TSdoc.= paste(
+              TSdescription="gspc  Close",
+	      TSdoc= paste(
 	         "gspc  Close retrieved with get.hist.quote on ", Sys.Date()))
       ) stop("Error putting gspc Business series on test db.")
 
@@ -21,8 +21,8 @@ if(require("tseries") &&  !inherits(
    x <- get.hist.quote(instrument = "ibm", quote = c("Cl", "Vol"))
 
    if( ! TSput(x, serIDs=c("ibm.Cl", "ibm.Vol"), con, Table="B",
-              TSdescription.=c("IBM Close","IBM  Volume"),
-	      TSdoc.= paste(c(
+              TSdescription=c("IBM Close","IBM  Volume"),
+	      TSdoc= paste(c(
 	         "IBM  Close retrieved with get.hist.quote on ",
 		 "IBM  Volume retrieved with get.hist.quote on "), Sys.Date()))
       ) stop("Error putting IBM Business series on test db.")
