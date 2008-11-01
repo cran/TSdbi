@@ -10,19 +10,21 @@
 \alias{TSreplace}
 \alias{TSreplace,default-method}
 
+\alias{logicalId-class}
+
 \title{Write Data to a Data Connection}
 \description{Write data to a server.}
 \usage{
-    TSput(x, serIDs=seriesNames(x), con=options()$TSconnection, ...)
-    TSdelete(serIDs, con=options()$TSconnection, ...)
-    TSreplace(x, serIDs=seriesNames(x), con=options()$TSconnection, ...)
+    TSput(x, serIDs=seriesNames(x), con=getOption("TSconnection"), ...)
+    TSdelete(serIDs, con=getOption("TSconnection"), ...)
+    TSreplace(x, serIDs=seriesNames(x), con=getOption("TSconnection"), ...)
 
-    \S4method{TSput}{ANY,missing,missing}(x, serIDs=seriesNames(x), con=options()$TSconnection, ...)
-    \S4method{TSput}{ANY,DBIConnection,missing}(x, serIDs=seriesNames(x), con=options()$TSconnection, ...)
-    \S4method{TSput}{ANY,character,ANY}(x, serIDs=seriesNames(x), con=options()$TSconnection, ...)
-    \S4method{TSdelete}{character,missing}(serIDs, con=options()$TSconnection, ...)
-    \S4method{TSdelete}{character,ANY}(serIDs, con=options()$TSconnection, ...)
-    \S4method{TSreplace}{default}(x, serIDs=seriesNames(x), con=options()$TSconnection, ...)
+    \S4method{TSput}{ANY,missing,missing}(x, serIDs=seriesNames(x), con=getOption("TSconnection"), ...)
+    \S4method{TSput}{ANY,DBIConnection,missing}(x, serIDs=seriesNames(x), con=getOption("TSconnection"), ...)
+    \S4method{TSput}{ANY,character,ANY}(x, serIDs=seriesNames(x), con=getOption("TSconnection"), ...)
+    \S4method{TSdelete}{character,missing}(serIDs, con=getOption("TSconnection"), ...)
+    \S4method{TSdelete}{character,ANY}(serIDs, con=getOption("TSconnection"), ...)
+    \S4method{TSreplace}{default}(x, serIDs=seriesNames(x), con=getOption("TSconnection"), ...)
 }
 \arguments{
     \item{con}{A database connection.}
@@ -31,10 +33,14 @@
     \item{...}{Arguments passed to other methods.}
 }
 
-\value{A logical indicating if the operation succeeded.}
+\value{An object of class logicalId.}
 
 \details{
-    These functions writes data to  a database connection. 
+    Class logicalId is a logical indicating if the operation succeeded, and
+    also contains meta data indicating how to retrieve the data. (Except in 
+    the case of TSdelete the data cannot be retrieved.)
+
+    These functions write data to a database connection. 
     \code{TSreplace} removes any existing object first. \code{TSput} will
     fail if a series with the same identifier already exists.
 

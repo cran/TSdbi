@@ -4,36 +4,56 @@
 # bug work around
 setClassUnion("OptionalPOSIXct",   c("POSIXct",   "logical"))
 
-setClass("TSmeta", 
-  representation(serIDs="character", dbname="character",
-  con="character", ExtractionDate="OptionalPOSIXct",
-  TSdescription="character", TSdoc="character" )) 
+# this just has db info
+setClass("TSdb", representation( dbname="character", 
+    hasVintages="logical", hasPanels="logical"), "VIRTUAL" )
 
-#TSmeta itself is an S4 class, but setting attr is S3ish,
-#  but this should always return an S4 TSmeta object
-setGeneric("TSmeta", 
-   def= function(x, con, ...) standardGeneric("TSmeta"))
+#The connection type is the class of an actual connection, which includes the
+# above virtual class. The conType in next TSid duplicates this, but otherwise
+# I don't see how to put the info in the TSid.
+
+# this has serIDs as well as there source db (so could be used to retrieve data)
+setClass("TSid",  contains="TSdb", representation(serIDs="character", 
+                     conType="character",DateStamp="OptionalPOSIXct")) 
+
+# this has serIDs and source db (in TDid) as well as documentation
+setClass("TSmeta", contains="TSid", 
+  representation(TSdescription="character", TSdoc="character", TSlabel="character" )) 
+
+# this is a logical but has TSid (so could be used to retrieve data)
+setClass("logicalId", contains="logical",
+            representation=representation(TSid="TSid")) 
+
+setGeneric("TSmeta", def= function(x, con, ...) standardGeneric("TSmeta"))
+
+setMethod("show", "logicalId", function(object) show(object@.Data))
+
 
 # this really should be for con="TSconnection" rather than ANY
 setMethod("TSmeta",   signature(x="character", con="ANY"),
-   definition= function(x, con=options()$TSconnection, ...){
+   definition= function(x, con=getOption("TSconnection"), ...){
        new("TSmeta", serIDs=x, dbname=con@dbname, 
-               con=class(con), ExtractionDate=NA, #NULL, # bug in 2.7.0 =Sys.time(),
+               hasVintages=con@hasVintages, hasPanels=con@hasPanels,
+               conType=class(con), DateStamp=NA, 
 	       TSdoc=TSdoc(x, con=con, ...),
+	       TSlabel=TSlabel(x, con=con, ...),
                TSdescription=TSdescription(x, con=con, ...))
 	} )
 
 setMethod("TSmeta",   signature(x="character", con="missing"),
-   definition= function(x, con=options()$TSconnection, ...) 
-       TSmeta(x, con=options()$TSconnection, ...) )
+   definition= function(x, con=getOption("TSconnection"), ...) 
+       TSmeta(x, con=getOption("TSconnection"), ...) )
 
 # extract meta data from an object, not from the db
 setMethod("TSmeta",   signature(x="ANY", con="missing"),
    definition=  function(x, con, ...) {
       m <- attr(x, "TSmeta")
       if(is.null(m)) new("TSmeta",serIDs=seriesNames(x), 
-	         dbname="", con="", ExtractionDate=NA, #NULL,
-		 TSdescription="", TSdoc="") else m
+	         dbname="", hasVintages=FALSE, hasPanels=FALSE,
+	         conType="", DateStamp=NA, #NULL,
+		 TSdescription= as(NA, "character"), 
+		 TSdoc =  as(NA, "character"), 
+		 TSlabel= as(NA, "character")) else m
       })
 
 setGeneric("TSmeta<-", 
@@ -44,29 +64,27 @@ setGeneric("TSmeta<-",
       x
       })
 
-setClass("TSdbOptions", representation(
-    dbname="character", vintage="logical", panel="logical"), "VIRTUAL" )
-
-setMethod("show", "TSdbOptions", function(object) {
-    cat("database ", object@dbname) 
-    if (object@vintage) cat( " Has vintages." )
-    if (object@panel) cat( " Has panels." )
-    cat("\n") 
-    invisible(object)
-    })
-
-setMethod("print", "TSdbOptions", function(x, ...) {
-    cat("database ", x@dbname) 
-    if (x@vintage) cat( " Has vintages." )
-    if (x@panel) cat( " Has panels." )
-    cat("\n") 
-    invisible(x)
-    })
+#setMethod("show", "TSdb", function(object) {
+#    cat("database ", object@dbname) 
+#    if (object@vintage) cat( " Has vintages." )
+#    if (object@panel) cat( " Has panels." )
+#    cat("\n") 
+#    invisible(object)
+#    })
+#
+#setMethod("print", "TSdb", function(x, ...) {
+#    cat("database ", x@dbname) 
+#    if (x@vintage) cat( " Has vintages." )
+#    if (x@panel) cat( " Has panels." )
+#    cat("\n") 
+#    invisible(x)
+#    })
 
 setGeneric("TSconnect", def= function(drv, dbname, ...) standardGeneric("TSconnect"))
 
 setMethod("TSconnect",   signature(drv="character", dbname="character"),
-   definition=function(drv, dbname, ...) TSconnect(dbDriver(drv), dbname=dbname))
+   definition=function(drv, dbname, ...)
+             TSconnect(dbDriver(drv), dbname=dbname, ...))
 
 setGeneric("TSdescription<-", 
    def= function(x, value) standardGeneric("TSdescription<-"),
@@ -80,22 +98,37 @@ setGeneric("TSdescription",
    def= function(x, con, ...) standardGeneric("TSdescription"))
 
 setMethod("TSdescription",   signature(x="character", con="missing"),
-   definition= function(x, con=options()$TSconnection, ...) 
-       TSdescription(x, con=options()$TSconnection, ...) )
+   definition= function(x, con=getOption("TSconnection"), ...) 
+       TSdescription(x, con=getOption("TSconnection"), ...) )
 
 setMethod("TSdescription",   signature(x="ANY", con="missing"),
    definition=  function(x, con, ...) TSmeta(x)@TSdescription)
 
 #  next is for case where there is no method for con  
 setMethod("TSdescription",   signature(x="character", con="ANY"),
-   definition= function(x, con=options()$TSconnection, ...) {
+   definition= function(x, con=getOption("TSconnection"), ...) {
        if(is.null(con)) stop("NULL con is not allowed. See ?TSdescription.")
        else stop("con class ", class(con), " is not supported.")} )
 
+#  Next two methods are for case where the user mistakenly specifies
+#     serIDS="whatever"  rather than x="whatever"
+#   ( A natural mistaken as this is the syntax for other functions.)
+setMethod("TSdescription",   signature(x="missing", con="ANY"),
+   definition=  function(x, con, serIDs, ...) {
+        if(missing(serIDs)) stop("missing argument x, must be specified.")
+	else TSdescription(x=serIDs, con=con, ...)
+	})
+
+setMethod("TSdescription",   signature(x="missing", con="missing"),
+   definition=  function(x, serIDs, ...) {
+        if(missing(serIDs)) stop("missing argument x, must be specified.")
+	else TSdescription(x=serIDs, ...)
+	})
+
 # a little internal utility to construct WHERE
 setWhere <- function(con, x, vintage, panel) {
-     if(con@panel   && is.null(panel))   stop("default panel is not set.") 
-     if(con@vintage) {
+     if(con@hasPanels   && is.null(panel))   stop("default panel is not set.") 
+     if(con@hasVintages) {
        if(is.null(vintage))	vintage <- "current" 
        if("current" == vintage) vintage <- dbGetQuery(con,
    	   "SELECT vintage  FROM vintageAlias WHERE alias='current';" )$vintage
@@ -106,11 +139,14 @@ setWhere <- function(con, x, vintage, panel) {
      where
      }
 
-TSdescriptionSQL <-  function(x=NULL, con=options()$TSconnection, 
-       vintage=options()$TSvintage, panel=options()$TSpanel, ...) {	    
-            r <- dbGetQuery(con, paste("SELECT description  FROM Meta ", 
-                       setWhere(con, x, vintage, panel), ";", sep=""))$description
-	    if(is.null(r)) "" else r
+TSdescriptionSQL <-  function(x=NULL, con=getOption("TSconnection"), 
+       vintage=getOption("TSvintage"), panel=getOption("TSpanel"), 
+       lang=getOption("TSlang"), ...) {	    
+            r <- dbGetQuery(con, paste("SELECT description", lang, 
+	            "  FROM Meta ", setWhere(con, x, vintage, panel), 
+		    ";", sep=""))[[1]]
+	    # r should already be char, but odbc converts NA to logical
+	    if(is.null(r))  as(NA, "character") else as(r, "character")
 	    }
 
 setGeneric("TSdoc<-", 
@@ -126,69 +162,142 @@ setGeneric("TSdoc",
    def= function(x, con, ...) standardGeneric("TSdoc"))
 
 setMethod("TSdoc",   signature(x="character", con="missing"),
-   definition= function(x, con=options()$TSconnection, ...) 
-       TSdoc(x, con=options()$TSconnection, ...) )
+   definition= function(x, con=getOption("TSconnection"), ...) 
+       TSdoc(x, con=getOption("TSconnection"), ...) )
 
 setMethod("TSdoc",   signature(x="ANY", con="missing"),
    definition=  function(x, con, ...) TSmeta(x)@TSdoc)
 
 #  next is for case where there is no method for con  
 setMethod("TSdoc",   signature(x="character", con="ANY"),
-   definition= function(x, con=options()$TSconnection, ...) {
+   definition= function(x, con=getOption("TSconnection"), ...) {
        if(is.null(con)) stop("NULL con is not allowed. See ?TSdoc.")
        else stop("con class ", class(con), " is not supported.")} )
 
-TSdocSQL <-  function(x=NULL, con=options()$TSconnection, 
-       vintage=options()$TSvintage, panel=options()$TSpanel, ...) {
+#  Next two methods are for case where the user mistakenly specifies
+#     serIDS="whatever"  rather than x="whatever"
+#   ( A natural mistaken as this is the syntax for other functions.)
+setMethod("TSdoc",   signature(x="missing", con="ANY"),
+   definition=  function(x, con, serIDs, ...) {
+        if(missing(serIDs)) stop("missing argument x, must be specified.")
+	else TSdoc(x=serIDs, con=con, ...)
+	})
+
+setMethod("TSdoc",   signature(x="missing", con="missing"),
+   definition=  function(x, serIDs, ...) {
+        if(missing(serIDs)) stop("missing argument x, must be specified.")
+	else TSdoc(x=serIDs, ...)
+	})
+
+TSdocSQL <-  function(x=NULL, con=getOption("TSconnection"), 
+       vintage=getOption("TSvintage"), panel=getOption("TSpanel"), 
+       lang=getOption("TSlang"), ...) {
             if(1 < length(x)) stop("One series only for TSdoc")
-            r <- dbGetQuery(con, paste("SELECT documentation  FROM Meta ", 
-                       setWhere(con, x, vintage, panel), ";", sep=""))$documentation
-	    if(is.null(r)) "" else r
+            r <- dbGetQuery(con, paste("SELECT documentation", lang, 
+	            "  FROM Meta ", setWhere(con, x, vintage, panel), 
+		    ";", sep=""))[[1]]
+	    # r should already be char, but odbc converts NA to logical
+	    if(is.null(r))  as(NA, "character") else as(r, "character")
 	    }
 
-setMethod("show", "TSmeta", function(object) {
-    cat("serIDs: ", object@serIDs, " from dbname: ", object@dbname, "\n") 
-    cat("description: ", object@TSdescription, "\n") 
-    cat("documentaion: ", object@TSdoc, "\n") 
-    invisible(object)
-    })
-
-setMethod("print", "TSmeta", function(x, ...) {
-    cat("serIDs: ", x@serIDs, " from dbname ", x@dbname, "\n") 
-    cat("description: ", x@TSdescription, "\n") 
-    cat("documentaion: ", x@TSdoc, "\n") 
-    invisible(x)
-    })
+setGeneric("TSlabel<-", 
+   def= function(x, value) standardGeneric("TSlabel<-"),
+   useAsDefault=  function (x, value){
+    m <- TSmeta(x)
+    m@TSlabel <- value
+    TSmeta(x) <- m
+    x})
 
 
-setGeneric("TSrefPeriod", 
-   def= function(x) standardGeneric("TSrefPeriod"),
-   useAsDefault= function(x) attr(x, "TSrefPeriod"))
+setGeneric("TSlabel", 
+   def= function(x, con, ...) standardGeneric("TSlabel"))
 
-setGeneric("TSrefPeriod<-", 
-   def= function(x, value) standardGeneric("TSrefPeriod<-"),
-   useAsDefault= function (x, value){attr(x, "TSrefPeriod") <- value ; x })
+setMethod("TSlabel",   signature(x="character", con="missing"),
+   definition= function(x, con=getOption("TSconnection"), ...) 
+       TSlabel(x, con=getOption("TSconnection"), ...) )
+
+setMethod("TSlabel",   signature(x="ANY", con="missing"),
+   definition=  function(x, con, ...) TSmeta(x)@TSlabel)
+
+#  next is for case where there is no method for con  
+setMethod("TSlabel",   signature(x="character", con="ANY"),
+   definition= function(x, con=getOption("TSconnection"), ...) {
+       if(is.null(con)) stop("NULL con is not allowed. See ?TSlabel.")
+       else stop("con class ", class(con), " is not supported.")} )
+
+#  Next two methods are for case where the user mistakenly specifies
+#     serIDS="whatever"  rather than x="whatever"
+#   ( A natural mistaken as this is the syntax for other functions.)
+setMethod("TSlabel",   signature(x="missing", con="ANY"),
+   definition=  function(x, con, serIDs, ...) {
+        if(missing(serIDs)) stop("missing argument x, must be specified.")
+	else TSlabel(x=serIDs, con=con, ...)
+	})
+
+setMethod("TSlabel",   signature(x="missing", con="missing"),
+   definition=  function(x, serIDs, ...) {
+        if(missing(serIDs)) stop("missing argument x, must be specified.")
+	else TSlabel(x=serIDs, ...)
+	})
+
+TSlabelSQL <-  function(x=NULL, con=getOption("TSconnection"), 
+       vintage=getOption("TSvintage"), panel=getOption("TSpanel"), 
+       lang=getOption("TSlang"), ...) {
+            if(1 < length(x)) stop("One series only for TSlabel")
+	    #  NOT YET
+            #r <- dbGetQuery(con, paste("SELECT label", lang, 
+	    #        "  FROM Meta ", setWhere(con, x, vintage, panel), 
+	    #        ";", sep=""))[[1]]
+	    ## r should already be char, but odbc converts NA to logical
+	    #if(is.null(r)) as(NA, "character") else as(r, "character")
+	    as(NA, "character")
+	    }
+
+#setMethod("show", "TSmeta", function(object) {
+#    cat("serIDs: ", object@serIDs, " from dbname: ", object@dbname) 
+#    cat("(type: ", object@conType, ")\n") 
+#    cat("description: ", object@TSdescription, "\n") 
+#    cat("documentaion: ", object@TSdoc, "\n") 
+#    invisible(object)
+#    })
+#
+#setMethod("print", "TSmeta", function(x, ...) {
+#    cat("serIDs: ", x@serIDs, " from dbname ", x@dbname) 
+#    cat("(type: ", x@conType, ")\n") 
+#    cat("description: ", x@TSdescription, "\n") 
+#    cat("documentaion: ", x@TSdoc, "\n") 
+#    invisible(x)
+#    })
+
+
+setGeneric("TSrefperiod", 
+   def= function(x) standardGeneric("TSrefperiod"),
+   useAsDefault= function(x) attr(x, "TSrefperiod"))
+
+setGeneric("TSrefperiod<-", 
+   def= function(x, value) standardGeneric("TSrefperiod<-"),
+   useAsDefault= function (x, value){attr(x, "TSrefperiod") <- value ; x })
 
 
 TSseriesIDs      <- function(x)TSmeta(x)@serIDs
 TScon            <- function(x)TSmeta(x)@con
-TSextractionDate <- function(x)TSmeta(x)@ExtractionDate
+TSextractionDate <- function(x)TSmeta(x)@DateStamp
 
 # host = "" is interpreted as localhost by the driver (see ?mysqlNewConnection)
 #see  vignette("zoo") for other examples
 
 
-setGeneric("TSput",    
-   def= function(x, serIDs=seriesNames(x), con=options()$TSconnection, ...)
+setGeneric("TSput", valueClass="logicalId",   
+   def= function(x, serIDs=seriesNames(x), con=getOption("TSconnection"), ...)
              standardGeneric("TSput")) 
 
 setMethod("TSput",   signature(x="ANY", serIDs="character", con="missing"),
-   definition= function(x, serIDs, con=options()$TSconnection, ...) 
-       TSput(x, serIDs=serIDs, con=options()$TSconnection, ...))
+   definition= function(x, serIDs, con=getOption("TSconnection"), ...) 
+       TSput(x, serIDs=serIDs, con=getOption("TSconnection"), ...))
 
 setMethod("TSput",   signature(x="ANY", serIDs="missing", con="missing"),
-   definition= function(x, serIDs, con=options()$TSconnection, ...) 
-       TSput(x, serIDs=seriesNames(x), con=options()$TSconnection, ...))
+   definition= function(x, serIDs, con=getOption("TSconnection"), ...) 
+       TSput(x, serIDs=seriesNames(x), con=getOption("TSconnection"), ...))
 
 setMethod("TSput",   signature(x="ANY", serIDs="DBIConnection", con="missing"),
    definition= function(x, serIDs, con, ...) 
@@ -196,22 +305,22 @@ setMethod("TSput",   signature(x="ANY", serIDs="DBIConnection", con="missing"),
 
 #  next is for case where there is no method for con  
 setMethod("TSput",   signature(x="ANY", serIDs="character", con="ANY"),
-   definition= function(x, serIDs=seriesNames(x), con=options()$TSconnection, ...) {
+   definition= function(x, serIDs=seriesNames(x), con=getOption("TSconnection"), ...) {
        if(is.null(con)) stop("NULL con is not allowed. See ?TSput.")
        else stop("con class ", class(con), " is not supported.")} )
 
    
 
 TSputSQL <- function(x, serIDs=seriesNames(x), con, Table=NULL,
-       TSdescription.=TSdescription(x), TSdoc.=TSdoc(x),  
-       vintage=options()$TSvintage, panel=options()$TSpanel, ...) {
+       TSdescription.=TSdescription(x), TSdoc.=TSdoc(x),  TSlabel.=TSlabel(x), 
+       vintage=getOption("TSvintage"), panel=getOption("TSpanel"), ...) {
 
   # so far I think this is generic to all SQL, but not extensively tested.
   # should rollback meta when data put fails
   #  (reversing order of M and P would mean data can change and 
   #    then meta fail, which seems worse.)
-  if(con@panel   && is.null(panel))   stop("default panel is not set.") 
-  if(con@vintage) {
+  if(con@hasPanels   && is.null(panel))   stop("default panel is not set.") 
+  if(con@hasVintages) {
     if(is.null(vintage))     vintage <- "current" 
     if("current" == vintage) vintage <- dbGetQuery(con,
      	"SELECT vintage  FROM vintageAlias WHERE alias='current';" )$vintage
@@ -219,7 +328,7 @@ TSputSQL <- function(x, serIDs=seriesNames(x), con, Table=NULL,
   # M does the write to Meta, P writes values to data table.
 
   # Column order could be specified after Meta, but this assumes  order
-  #([vintage,] [ panel,] id, tbl, refPeriod, description, documentation )
+  #([vintage,] [ panel,] id, tbl, refperiod, description, documentation )
   M <- function(v, p, table, id, rP, desc, doc) {
     if(is.null(rP))   rP   <- "NA"
     if(is.null(desc)) desc <- "NA"
@@ -265,7 +374,7 @@ TSputSQL <- function(x, serIDs=seriesNames(x), con, Table=NULL,
   ids <-  serIDs 
   #ids <- gsub(" ", "", serIDs ) # remove spaces in id
   #if(! all( ids == serIDs)) warning("spaces removed from series names.")
-  rP <- TSrefPeriod(x)
+  rP <- TSrefperiod(x)
   N <- periods(x)
   # SHOULD PROBABLY HAVE METHODS FOR TS, ZOO, ITS, ... HERE
   if(is.ts(x)) {
@@ -331,68 +440,86 @@ TSputSQL <- function(x, serIDs=seriesNames(x), con, Table=NULL,
     else stop("Table specification not supported.")  
      }
   else stop("Time series type not recognized.")  
-  ok & okM
+  new("logicalId", ok & okM, 
+        TSid=new("TSid", serIDs=serIDs, dbname=con@dbname, 
+	         conType=class(con), hasVintages=con@hasVintages, hasPanels=con@hasPanels,
+		 DateStamp=NA))
   }
 
 
-setGeneric("TSreplace", 
-   def= function(x, serIDs=seriesNames(x), con=options()$TSconnection, ...)
+setGeneric("TSreplace",  valueClass="logicalId",
+   def= function(x, serIDs=seriesNames(x), con=getOption("TSconnection"), ...)
            standardGeneric("TSreplace"),
-   useAsDefault= function(x,serIDs=seriesNames(x), con=options()$TSconnection,  ...) {
+   useAsDefault= function(x,serIDs=seriesNames(x),
+                          con=getOption("TSconnection"),  ...) {
       if(missing(con) & (!missing(serIDs)) && is(serIDs, "DBIConnection")) 
 	     return(TSreplace(x, serIDs=seriesNames(x), con=serIDs, ...))
-      TSdelete(serIDs=serIDs, con=con, ...)
-      TSput(x, serIDs=serIDs, con=con, ...) }
-   )
+      if(TSexists(serIDs=serIDs, con=con, ...))
+               TSdelete(serIDs=serIDs, con=con, ...)
+      TSput(x, serIDs=serIDs, con=con, ...) 
+   })
 
-setGeneric("TSdelete", 
-   def= function(serIDs, con=options()$TSconnection, ...)
+setGeneric("TSdelete",  valueClass="logicalId",
+   def= function(serIDs, con=getOption("TSconnection"), ...)
            standardGeneric("TSdelete") )
 
 setMethod("TSdelete",   signature(serIDs="character", con="missing"),
-   definition= function(serIDs, con=options()$TSconnection, ...) 
-       TSdelete(serIDs, con=options()$TSconnection, ...) )
+   definition= function(serIDs, con=getOption("TSconnection"), ...) 
+       TSdelete(serIDs, con=getOption("TSconnection"), ...) )
 
 #  next is for case where there is no method for con  
 setMethod("TSdelete",   signature(serIDs="character", con="ANY"),
-   definition= function(serIDs, con=options()$TSconnection, ...) {
+   definition= function(serIDs, con=getOption("TSconnection"), ...) {
        if(is.null(con)) stop("NULL con is not allowed. See ?TSdelete.")
        else stop("con class ", class(con), " is not supported.")} )
 
    
-TSdeleteSQL <- function(serIDs, con=options()$TSconnection,  
-   vintage=options()$TSvintage, panel=options()$TSpanel, ...) {
-       for (i in seq(length(serIDs))) {
-           where <-  setWhere(con, serIDs[i], vintage, panel)
-           q <- dbGetQuery(con, paste("SELECT tbl  FROM Meta ",where, ";"))
-            if(0 != length(q)) {
-	      dbGetQuery(con, paste("DELETE FROM ", q$tbl, where, ";")) 
-              dbGetQuery(con, paste("DELETE FROM Meta ",   where, ";")) 
-              }
-	    }
-	}
+TSdeleteSQL <- function(serIDs, con=getOption("TSconnection"),  
+   vintage=getOption("TSvintage"), panel=getOption("TSpanel"), ...) {
+     for (i in seq(length(serIDs))) {
+     	where <-  setWhere(con, serIDs[i], vintage, panel)
+     	q <- dbGetQuery(con, paste("SELECT tbl  FROM Meta ",where, ";"))
+     	 if(0 != length(q)) {
+     	   dbGetQuery(con, paste("DELETE FROM ", q$tbl, where, ";")) 
+     	   dbGetQuery(con, paste("DELETE FROM Meta ",	where, ";")) 
+     	   }
+     	 }
+     # could do better checking here
+     new("logicalId", TRUE, 
+          TSid=new("TSid", serIDs=serIDs, dbname=con@dbname, 
+             conType=class(con), hasVintages=con@hasVintages, hasPanels=con@hasPanels, 
+	     DateStamp=NA ))
+     }
 
 
 setGeneric("TSget", 
-   def= function(serIDs, con=options()$TSconnection, ...)
+   def= function(serIDs, con=getOption("TSconnection"), ...)
            standardGeneric("TSget") )
 
 setMethod("TSget",   signature(serIDs="character", con="missing"),
-   definition= function(serIDs, con=options()$TSconnection, ...) 
-       TSget(serIDs, con=options()$TSconnection, ...) )
+   definition= function(serIDs, con=getOption("TSconnection"), ...) 
+       TSget(serIDs, con=getOption("TSconnection"), ...) )
 
 #  next is for case where there is no method for con  
 setMethod("TSget",   signature(serIDs="character", con="ANY"),
-   definition= function(serIDs, con=options()$TSconnection, ...) {
+   definition= function(serIDs, con=getOption("TSconnection"), ...) {
        if(is.null(con)) stop("NULL con is not allowed. See ?TSget.")
        else stop("con class ", class(con), " is not supported.")} )
 
-# next is not really a method, but it is called by methods for various SQL dbs.
-TSgetSQL <- function(serIDs, con, TSrepresentation=options()$TSrepresentation,
-       names=NULL, TSdescription=FALSE, TSdoc=FALSE,
-       vintage=options()$TSvintage, panel=options()$TSpanel, ...) {
+# next is called by methods for various SQL dbs.
+TSgetSQL <- function(serIDs, con, TSrepresentation=getOption("TSrepresentation"),
+       tf=NULL, start=tfstart(tf), end=tfend(tf),
+       names=NULL, TSdescription=FALSE, TSdoc=FALSE,  TSlabel=FALSE,
+       vintage=getOption("TSvintage"), panel=getOption("TSpanel"), ...) {
   # so far I think this is generic to all SQL.
   if(is.null(TSrepresentation)) TSrepresentation <- "default"
+
+  if(con@hasPanels   && is.null(panel))   stop("default panel is not set.") 
+  if(con@hasVintages) {
+    if(is.null(vintage))     vintage <- "current" 
+    if("current" == vintage) vintage <- dbGetQuery(con,
+     	"SELECT vintage  FROM vintageAlias WHERE alias='current';" )$vintage
+    }
     
   Q <- function(q) {# local function
       res <- dbGetQuery(con, q)
@@ -400,74 +527,71 @@ TSgetSQL <- function(serIDs, con, TSrepresentation=options()$TSrepresentation,
       as.matrix(res)
       }
 
-  mat <- desc <- doc <- rp <- NULL
+  mat <- desc <- doc <- label <- rp <- NULL
+  # if series are in "A", "Q", "M","S" use  ts otherwise zoo.
   for (i in seq(length(serIDs))) {
     where <-  setWhere(con, serIDs[i], vintage, panel)
-    q <- dbGetQuery(con, paste("SELECT tbl, refPeriod  FROM Meta ",where, ";"))
-    tbl <- q$tbl
-    rp <- c(rp, q$refPeriod)
+    q <- dbGetQuery(con, paste("SELECT tbl, refperiod  FROM Meta ",where, ";"))
+    if(0 == NROW(q$tbl)) stop("Meta lookup for series ",
+           serIDs[i], " table result empty. Series does not exist on database.")
 
-    if(is.null(tbl)) stop("Meta lookup for series ",
-             serIDs[i], " table result NULL. Probably series does not exist.")
-
-    if (TSrepresentation == "default") {
-       TSrepresentation <-  if (tbl %in% c("A", "Q", "M","S")) "ts" else "zoo"
+    if  (i == 1) {
+       tbl <- q$tbl
+       useZoo <- if ((TSrepresentation == "zoo") | 
+                   !(tbl %in% c("A", "Q", "M","S"))) TRUE else FALSE 
+       if(useZoo && !require("zoo")) stop("zoo package is required.")
        }
-    if (TSrepresentation == "zoo" && ! require("zoo")) 
-       stop("zoo package is required.")
+    else if(q$tbl != tbl) 
+       stop("Series must all have the same frequency or time representation.")
+    rp <- c(rp, q$refperiod)
 
     if (tbl=="A") 
       {res <- Q(paste("SELECT year, v FROM A ",where, " order by year;"))
-       r <- do.call(TSrepresentation,
-                   list(res[,2], start=c(res[1,1], 1), frequency=1)) 
-      }
+       r   <- ts(res[,2], start=c(res[1,1], 1), frequency=1) 
+       if(useZoo) r <- as.zoo(r)
+     }
     else if (tbl=="Q")  
       {res <- Q(paste("SELECT year, period, v FROM Q ",where, " order by year, period;"))
-       r <- do.call(TSrepresentation,
-                   list(res[,3], start=c(res[1,1:2]), frequency=4) )	 
+       r   <- ts(res[,3], start=c(res[1,1:2]), frequency=4) 	 
+       if(useZoo) r <- as.zoo(r)
       }
     else if (tbl=="M")
       {res <- Q(paste("SELECT year, period, v FROM M ",where, " order by year, period;"))
-       r <- do.call(TSrepresentation,
-                   list(res[,3], start=c(res[1,1:2]), frequency=12) )	 
+       r   <- ts(res[,3], start=c(res[1,1:2]), frequency=12)	 
+       if(useZoo) r <- as.zoo(r)
       }
     else if (tbl=="W") 
       {res <- Q(paste("SELECT date, period, v FROM W ",where, " order by date;"))
-       r <- do.call(TSrepresentation,
-                   list(as.numeric(res[,3]), as.Date(res[,1])))
+       r   <- zoo(as.numeric(res[,3]), as.Date(res[,1]))
        # period is as.int(res[,2]) 	 
       }
     else if (tbl=="B") 
       {res <- Q(paste("SELECT date, period, v FROM B ",where, " order by date;"))
-       r <- do.call(TSrepresentation,
-                   list(as.numeric(res[,3]), as.Date(res[,1])))
+       r   <- zoo(as.numeric(res[,3]), as.Date(res[,1]))
        # period is as.int(res[,2]) 	 
       }
     else if (tbl=="D")  
       {res <- Q(paste("SELECT date, period, v FROM D ",where, " order by date;"))
-       r <- do.call(TSrepresentation,
-                   list(as.numeric(res[,3]), as.Date(res[,1])))
+       r   <- zoo(as.numeric(res[,3]), as.Date(res[,1]))
        # period is as.int(res[,2]) 	 
       }
     else if (tbl=="S")    
       {res <- Q(paste("SELECT year, period, v FROM S ",where, " order by year, period;"))
-       r <- do.call(TSrepresentation,
-                   list(res[,3], start=c(res[1,1:2]), frequency=2) )	 
+       r   <- ts(res[,3], start=c(res[1,1:2]), frequency=2)	 
+       if(useZoo) r <- as.zoo(r)
       }
     else if (tbl=="U")  
       {res <- Q(paste("SELECT date, tz, period, v FROM U ",where, " order by date;"))
-       r <- do.call(TSrepresentation,
-                   list(as.numeric(res[,4]), as.Date(res[,1])))
+       r   <- zoo(as.numeric(res[,4]), as.Date(res[,1]))
        # tz ? period is as.int(res[,3]) 	 
       }
     else if (tbl=="I")  
       {res <- Q(paste("SELECT date, v FROM I ",where, " order by date;"))
-       r <- do.call(TSrepresentation, list(as.numeric(res[,2]), as.Date(res[,1])))
+       r   <- zoo(as.numeric(res[,2]), as.Date(res[,1]))
       }
     else if (tbl=="T")  
       {res <- Q(paste("SELECT date, v FROM T ",where, " order by date;"))
-       r <- do.call(TSrepresentation, 
-                          list(as.numeric(res[,2]), as.POSIXct(res[,1])))
+       r   <- zoo(as.numeric(res[,2]), as.POSIXct(res[,1]))
       }
     else stop("Specified table not found.", 
               " (Internal TSdbi or database error likely.)",
@@ -475,49 +599,46 @@ TSgetSQL <- function(serIDs, con, TSrepresentation=options()$TSrepresentation,
               " could not find tbl ", tbl)  
     
     if(TSdescription) desc <- c(desc, TSdescription(serIDs[i],con) ) # where?
-    if(TSdoc)   doc <- c(doc, TSdoc(serIDs[i],con) ) # where?
+    if(TSdoc)         doc  <- c(doc,  TSdoc(serIDs[i],con) ) # where?
+    if(TSlabel)       label<- c(label,TSlabel(serIDs[i],con) ) # where?
     mat <- tbind(mat, r)
     }
-
-  #if(TSdescription) TSdescription(mat) <- desc
-  #if(TSdoc)   TSdoc(mat)   <- doc
-  if( (!all(is.na(rp))) && !all(rp == "	" ) ) TSrefPeriod(r) <- rp      
+  mat <- tfwindow(mat, tf=tf, start=start, end=end)
+  if( (!all(is.na(rp))) && !all(rp == "	" ) ) TSrefperiod(mat) <- rp      
   
+  if (! TSrepresentation  %in% c( "zoo", "default"))
+      mat <- do.call(TSrepresentation, list(mat))   
   seriesNames(mat) <- if(!is.null(names)) names else serIDs 
-  # there seems to be a problem with con=con
-  #TSsourceInfo(mat) <- new("TSsourceInfo", serIDs=serIDs, con=class(con), 
-  #                        ExtractionDate= Sys.time()) 
   TSmeta(mat) <- new("TSmeta", serIDs=serIDs, dbname=con@dbname, 
-      con=class(con), ExtractionDate=NA, # NULL,  # bug in 2.7.0 =Sys.time(), 
-      TSdescription=if(TSdescription) desc else "", TSdoc=if(TSdoc) doc else "")
+      conType=class(con), hasVintages=con@hasVintages, hasPanels=con@hasPanels, 
+      DateStamp=NA, # bug in 2.7.0 =Sys.time(), 
+      TSdescription=if(TSdescription) desc else  as(NA, "character"), 
+      TSdoc        =if(TSdoc)          doc else  as(NA, "character"),
+      TSlabel      =if(TSlabel)      label else  as(NA, "character"))
   mat
   }
 
-setGeneric("TSdates", 
-   def= function(serIDs, con=options()$TSconnection, ...)
-           standardGeneric("TSdates") )
 
-setGeneric("TSdates", 
-   def= function(serIDs, con=options()$TSconnection, ...)
+setGeneric("TSdates", def= function(serIDs, con=getOption("TSconnection"), ...)
            standardGeneric("TSdates") )
 
 setMethod("TSdates",   signature(serIDs="character", con="missing"),
-   definition= function(serIDs, con=options()$TSconnection, ...) 
-       TSdates(serIDs, con=options()$TSconnection, ...) )
+   definition= function(serIDs, con=getOption("TSconnection"), ...) 
+       TSdates(serIDs, con=getOption("TSconnection"), ...) )
 
 #  next is for case where there is no method for con  
 setMethod("TSdates",   signature(serIDs="character", con="ANY"),
-   definition= function(serIDs, con=options()$TSconnection, ...) {
+   definition= function(serIDs, con=getOption("TSconnection"), ...) {
        if(is.null(con)) stop("NULL con is not allowed. See ?TSdates.")
        else stop("con class ", class(con), " is not supported.")} )
 
 TSdatesSQL <- function(serIDs, con,  
-       vintage=options()$TSvintage, panel=options()$TSpanel, ...) {
+       vintage=getOption("TSvintage"), panel=getOption("TSpanel"), ...) {
   # so far I think this is generic to all SQL, but untested.
   r  <- av <- tb <- rP <- NULL
   st <- en <- list()
   for (i in seq(length(serIDs))) {
-    q <- dbGetQuery(con, paste("SELECT id, tbl, refPeriod  FROM Meta ", 
+    q <- dbGetQuery(con, paste("SELECT id, tbl, refperiod  FROM Meta ", 
                     setWhere(con, serIDs[i], vintage,panel), ";", sep=""))
     if(0==length(q)) {
         av <- c(av, FALSE)
@@ -527,13 +648,13 @@ TSdatesSQL <- function(serIDs, con,
 	rP <- rbind(rP, NA)
 	}
     else  {
-      q2 <-  TSget(serIDs=serIDs[i], con)
+      q2 <-  TSget(serIDs=serIDs[i], con, ...)
       av <- c(av, TRUE)
       # paste(start(q2), collapse="-")
       st <- append(st, list(start(q2)))
       en <- append(en, list(end(q2)))
       tb <- rbind(tb, q$tb)
-      rP <- rbind(rP, q$TSrefPeriod)
+      rP <- rbind(rP, q$TSrefperiod)
      }
     }
   r <- serIDs
@@ -541,7 +662,7 @@ TSdatesSQL <- function(serIDs, con,
   attr(r, "start") <- st
   attr(r, "end")   <- en
   attr(r, "tbl")   <- tb
-  attr(r, "TSrefPeriod")   <- rP
+  attr(r, "TSrefperiod")   <- rP
   class(r) <- "TSdates"
   r
   }
@@ -558,7 +679,7 @@ print.TSdates   <- function(x, ...) {
    en <-  attr(x, "end")  
    fr <-  attr(x, "frequency")  # used by TSpadi and possibly elsewhere
    tb <-  attr(x, "tbl")  
-   rP <-  attr(x, "TSrefPeriod")
+   rP <-  attr(x, "TSrefperiod")
    for (i in 1:length(x)) {
       if (!av[i]) r <- c(r, paste(x[i], " not available"))
       else {
@@ -571,13 +692,16 @@ print.TSdates   <- function(x, ...) {
    }
    
 
-setGeneric("TSexists",
-   def= function(serIDs, con=options()$TSconnection, ...)
-              standardGeneric("TSexists"),
-   useAsDefault= function(serIDs, con, ...){
-	   ! any(is.na(attr(TSdates(serIDs, con), "tbl")))})
+setGeneric("TSexists", valueClass="logicalId",
+ def= function(serIDs, con=getOption("TSconnection"), ...)
+ 	    standardGeneric("TSexists"),
+ useAsDefault= function(serIDs, con, ...){
+    new("logicalId", ! any(is.na(attr(TSdates(serIDs, con), "tbl"))), 
+       TSid=new("TSid", serIDs=serIDs, dbname=con@dbname, 
+              conType=class(con), hasVintages=con@hasVintages, hasPanels=con@hasPanels,
+	      DateStamp=NA))})
 
- 
+
 #####################################
 # a little utility
 

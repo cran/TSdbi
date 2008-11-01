@@ -17,13 +17,15 @@ export(
 
 ## S4 Classes
 exportClasses(
-   "TSdbOptions",
-   "TSmeta"
+   "TSdb",
+   "TSid",
+   "TSmeta",
+   "logicalId"
    )
 
 ## S4 generics
 export(
-   "print",
+   ##"print",
    "show",
    "TSconnect",
    "TSget",
@@ -36,15 +38,17 @@ export(
    "TSdescription<-",
    "TSdoc",
    "TSdoc<-",
+   "TSlabel",
+   "TSlabel<-",
    "TSmeta",
    "TSmeta<-",
-   "TSrefPeriod",
-   "TSrefPeriod<-" 
+   "TSrefperiod",
+   "TSrefperiod<-" 
    )
 
 ## S4 methods
 exportMethods(
-   "print",
+   ##"print",
    ## "dbConnect", # generic from DBI
    "TSconnect",
    "TSget",

@@ -2,10 +2,48 @@
    
 KNOWN BUGS
 
-    o None for the moment (but see TO DO).
+    o Warning messages about "show" are diplayed when some of the plugin
+      packages are attached. 
+
+    o There is a warning message about ambiguous slot choice in the integer 
+      coercion of the connection con. (This is a bug in DBI packages.)
+
+    o See also TO DO below.
 
 
-CHANGES IN TSdbi VERSION 2008.x-x
+CHANGES IN TSdbi VERSION 2008.11-1
+
+    o  A mechanism has been added for (optionally) allowing different vintages 
+       and panels of the data series. (e.g. series with the same identifier 
+       but a different release date or country).
+
+    o  More database plugins have been added  (PostgreSQL, ODBC, Fame). 
+
+    o  A mechanism to support multilingual documentation as been added (but not
+       yet well tested).
+ 
+    o  The is support to specify what time series representation should be 
+       returned.
+
+    o  Vignettes have been expanded.
+
+    o  The class representation of some objects was cleaned up and improved.
+
+    o renamed class TSdbOptions to TSdb and change TS*Connection classes to
+      include it in their representation rather than with contains.
+
+    o changed fields refPeriod to refperiod in tables to avoid capitalization 
+      issues among SQL version. Changed TSrefPeriod to TSrefperiod to avoid 
+      confusion.
+
+    o changed tables Panels to panels and Vintages to vintages, to avoid
+      confusion, but tables do not seem to suffer from the capitalization issue.  
+
+    o changed "double" to "double precision" and DATETIME to TIMESTAMP in 
+      inst/TSsql/CreateTables.TSsql as these work in other SQL versions 
+      as well as MySQL.
+
+CHANGES IN TSdbi VERSION 2008.8-1
 
     o adjusted TSquery to use standard sql extract(YEAR rather than mysql YEAR(.
 
@@ -30,27 +68,9 @@ CHANGES IN TSdbi VERSION 2007.10-1
 
 TO DO
 
-- The immediate extension already in progress is a mechanism for (optionally)
-  allowing different vintages and panels of the data series. (e.g.
-  series with the same identifier but a different release date or country).
-
 - a mechanism for handling aliases for series names.
 
-- an RODBC database plugin
-
-- an R postgresql database plugin 
-
-- a direct fame database plugin (Fame through padi works, but is read only)
-
-- optionally different time series representations.
-
-- write better vignettes (from tests)
-
 - rollback meta when data put fails
-
-- put (write) other representations of ts
-
-- multilingual documentation
 
 - mechanism for signaling series updates to users
 

@@ -11,10 +11,10 @@
 \title{Check Data Availability}
 \description{Check the dates for which date is available.}
 \usage{
-    TSdates(serIDs, con=options()$TSconnection, ...)
+    TSdates(serIDs, con=getOption("TSconnection"), ...)
 
-    \S4method{TSdates}{character,missing}(serIDs, con=options()$TSconnection, ...)
-    \S4method{TSdates}{character,ANY}(serIDs, con=options()$TSconnection, ...)
+    \S4method{TSdates}{character,missing}(serIDs, con=getOption("TSconnection"), ...)
+    \S4method{TSdates}{character,ANY}(serIDs, con=getOption("TSconnection"), ...)
 
     \method{start}{TSdates}(x, ...)
     \method{tfstart}{TSdates}(x)

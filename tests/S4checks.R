@@ -17,10 +17,6 @@ setMethod("TSmetax",   signature(x="character"),
        } )
 
 
-warning("Test TSdbi/tests/S4checks.R temporarily disabled.")
-#z <- new("TSmetax", serIDs="whatever", ExtractionDate= Sys.time())
-#z
-
 z <- new("TSmetax", serIDs="whatever", ExtractionDate= NULL)
 print(z)
 

@@ -1,18 +1,27 @@
 
-cat("Creating Vintages table and modifying other tables to include Vintage.\n")
+cat("Creating vintages table and modifying other tables to include Vintage.\n")
 
-# Set up Vintages table.
+# Set up vintages table.
 
-if(dbExistsTable(con, "Vintages")) dbRemoveTable(con, "Vintages")
+if(dbExistsTable(con, "vintages")) dbRemoveTable(con, "vintages")
 
-dbGetQuery(con, "create table Vintages (
+dbGetQuery(con, "create table vintages (
    vintage     VARCHAR(20) NOT NULL, 
-   alias       VARCHAR(20) default NULL,
-   Documentation     TEXT,
+   documentation     TEXT,
    PRIMARY KEY (vintage)
    );")
+
+if(dbExistsTable(con, "vintageAlias")) dbRemoveTable(con, "vintageAlias")
+
+dbGetQuery(con, "create table vintageAlias (
+   vintage     VARCHAR(20) NOT NULL, 
+   alias       VARCHAR(20) default NULL,
+   PRIMARY KEY (alias)
+   );")
+
+
 # an index speeds access but slows update
-dbGetQuery(con, "CREATE INDEX index_alias ON Vintages (alias);")
+dbGetQuery(con, "CREATE INDEX index_alias ON vintages (alias);")
 
 
 dbGetQuery(con, "ALTER TABLE A ADD COLUMN vintage VARCHAR(20);")
@@ -45,20 +54,29 @@ dbGetQuery(con, "CREATE INDEX index_vintage   ON U (vintage);")
 dbGetQuery(con, "ALTER TABLE W ADD COLUMN vintage VARCHAR(20);")
 dbGetQuery(con, "CREATE INDEX index_vintage   ON W (vintage);")
 
-cat("Creating Panels table and modifying other tables to include Panel.\n")
+cat("Creating panels table and modifying other tables to include Panel.\n")
 
-# Set up Panels table.
+# Set up panels table.
 
-if(dbExistsTable(con, "Panels")) dbRemoveTable(con, "Panels")
+if(dbExistsTable(con, "panels")) dbRemoveTable(con, "panels")
 
-dbGetQuery(con, "create table Panels (
+dbGetQuery(con, "create table panels (
    panel     VARCHAR(20) NOT NULL, 
-   alias       VARCHAR(20) default NULL,
-   Documentation     TEXT,
+   documentation     TEXT,
    PRIMARY KEY (panel)
    );")
+
+if(dbExistsTable(con, "panelAlias")) dbRemoveTable(con, "panelAlias")
+
+dbGetQuery(con, "create table panelAlias (
+   panel     VARCHAR(20) NOT NULL, 
+   alias       VARCHAR(20) default NULL,
+   PRIMARY KEY (alias)
+   );")
+
+
 # an index speeds access but slows update
-dbGetQuery(con, "CREATE INDEX index_alias ON Panels (alias);")
+dbGetQuery(con, "CREATE INDEX index_alias ON panels (alias);")
 
 
 dbGetQuery(con, "ALTER TABLE A ADD COLUMN panel VARCHAR(20);")
