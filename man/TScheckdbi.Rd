@@ -7,8 +7,8 @@
 \description{Check if time series database connection is ok.}
 \usage{
     TScheckdbi(con)
-    \S4method{TScheckdbi}{missing}(con=options()$TSconnection)
-    \S4method{TScheckdbi}{ANY}(con=options()$TSconnection)
+    \S4method{TScheckdbi}{missing}(con=getOption("TSconnection"))
+    \S4method{TScheckdbi}{ANY}(con=getOption("TSconnection"))
 }
 \arguments{
     \item{con}{A database connection.}

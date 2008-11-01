@@ -9,7 +9,7 @@ if(require("tseries") &&  !inherits(
    # Business
    x <- get.hist.quote(instrument = "^gspc", start = "1998-01-01",quote = "Close")
    plot(x)
-   TSrefPeriod(x) <- "Close"
+   TSrefperiod(x) <- "Close"
    if( ! TSput(x,  serIDs="gspc", con, Table="B",
               TSdescription="gspc  Close",
 	      TSdoc= paste(

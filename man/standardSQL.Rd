@@ -2,30 +2,37 @@
 \alias{TSgetSQL}
 \alias{TSputSQL}
 \alias{TSdatesSQL}
-\alias{TSdocSQL}
 \alias{TSdescriptionSQL}
+\alias{TSdocSQL}
+\alias{TSlabelSQL}
 \alias{TSdeleteSQL}
 
 
 \title{Standard SQL Database Queries}
 \description{Standard SQL database queries}
 \usage{
-    TSgetSQL(serIDs, con, TSrepresentation=options()$TSrepresentation,
-       names=NULL, TSdescription=FALSE, TSdoc=FALSE,
-       vintage=options()$TSvintage, panel=options()$TSpanel, ...)
+    TSgetSQL(serIDs, con, TSrepresentation=getOption("TSrepresentation"),
+       tf = NULL, start = tfstart(tf), end = tfend(tf), 
+       names=NULL, TSdescription=FALSE, TSdoc=FALSE,  TSlabel=FALSE,
+       vintage=getOption("TSvintage"), panel=getOption("TSpanel"), ...)
 
     TSdatesSQL(serIDs, con, 
-       vintage=options()$TSvintage, panel=options()$TSpanel, ...)
-    TSdeleteSQL(serIDs, con=options()$TSconnection, 
-       vintage=options()$TSvintage, panel=options()$TSpanel, ...) 
-    TSdocSQL(x=NULL, con=options()$TSconnection, 
-       vintage=options()$TSvintage, panel=options()$TSpanel, ...)
-    TSdescriptionSQL(x=NULL, con=options()$TSconnection, 
-       vintage=options()$TSvintage, panel=options()$TSpanel, ...)
+       vintage=getOption("TSvintage"), panel=getOption("TSpanel"), ...)
+    TSdeleteSQL(serIDs, con=getOption("TSconnection"), 
+       vintage=getOption("TSvintage"), panel=getOption("TSpanel"), ...) 
+    TSdescriptionSQL(x=NULL, con=getOption("TSconnection"), 
+       vintage=getOption("TSvintage"), panel=getOption("TSpanel"),
+       lang=getOption("TSlang"), ...)
+    TSdocSQL(x=NULL, con=getOption("TSconnection"), 
+       vintage=getOption("TSvintage"), panel=getOption("TSpanel"),
+       lang=getOption("TSlang"), ...)
+    TSlabelSQL(x=NULL, con=getOption("TSconnection"), 
+       vintage=getOption("TSvintage"), panel=getOption("TSpanel"),
+       lang=getOption("TSlang"), ...)
 
     TSputSQL(x, serIDs=seriesNames(x), con,  Table=NULL,
-       TSdescription.=TSdescription(x), TSdoc.=TSdoc(x), 
-       vintage=options()$TSvintage, panel=options()$TSpanel, ...)
+       TSdescription.=TSdescription(x), TSdoc.=TSdoc(x),  TSlabel.=TSlabel(x), 
+       vintage=getOption("TSvintage"), panel=getOption("TSpanel"), ...)
 }
 \arguments{
     \item{con}{A database connection.}
@@ -33,6 +40,9 @@
     \item{TSrepresentation}{time series representation to use for the result.}
     \item{x}{time series data, or serIDs.}
     \item{names}{Optional character vector to use for series names.}
+    \item{tf}{Optional tframe to use for truncating data. (See \code{tfwindow}.)}
+    \item{start}{Optional start date to use for truncating data. (See \code{tfwindow}.)}
+    \item{end}{Optional end date to use for truncating data. (See \code{tfwindow}.)}
     \item{TSdescription}{TRUE or FALSE indicating whether description 
        should be extracted}
     \item{TSdescription.}{Description to put on the database.}
@@ -63,6 +73,7 @@ with the package name (e.g. \code{TSdbi:::TSgetSQL})
 \code{\link{TSdelete}},
 \code{\link{TSmeta}},
 \code{\link{TSdates}}
+\code{\link[tframe]{tfwindow}}
 }
 \keyword{internal}
 

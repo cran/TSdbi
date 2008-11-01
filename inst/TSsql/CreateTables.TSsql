@@ -10,11 +10,11 @@ if(dbExistsTable(con, "Meta")) dbRemoveTable(con, "Meta")
 dbGetQuery(con, "create table Meta (
    id          VARCHAR(40) NOT NULL,
    tbl         CHAR(1), 
-   refPeriod   VARCHAR(10) default NULL,
+   refperiod   VARCHAR(10) default NULL,
    description   TEXT,
-   documentation     TEXT,
-   PRIMARY KEY (id)
+   documentation     TEXT
    );")
+dbGetQuery(con, "CREATE UNIQUE INDEX Metaindex_id ON Meta (id);")
 dbGetQuery(con, "CREATE INDEX Metaindex_tbl ON Meta (tbl);")
 
 # Set up annual table  A.
@@ -24,7 +24,7 @@ if(dbExistsTable(con, "A")) dbRemoveTable(con, "A")
 dbGetQuery(con, "create table A (
    id	      VARCHAR(40),
    year	      INT,
-   v    double DEFAULT  NULL
+   v    double precision DEFAULT  NULL
    );")
 dbGetQuery(con, "CREATE INDEX Aindex_id     ON A (id);")
 dbGetQuery(con, "CREATE INDEX Aindex_year   ON A (year);")
@@ -37,7 +37,7 @@ dbGetQuery(con, "create table B (
    id	      VARCHAR(40),
    date	      DATE,
    period     INT,
-   v    double DEFAULT  NULL
+   v    double precision DEFAULT  NULL
    );")
 dbGetQuery(con, "CREATE INDEX Bindex_id     ON B (id);")
 dbGetQuery(con, "CREATE INDEX Bindex_date   ON B (date);")
@@ -52,7 +52,7 @@ dbGetQuery(con, "create table D (
    id	      VARCHAR(40),
    date	      DATE,
    period     INT,
-   v    double DEFAULT  NULL
+   v    double precision DEFAULT  NULL
    );")
 dbGetQuery(con, "CREATE INDEX Dindex_id     ON D (id);")
 dbGetQuery(con, "CREATE INDEX Dindex_date   ON D (date);")
@@ -67,7 +67,7 @@ dbGetQuery(con, "create table M (
    id	      VARCHAR(40),
    year	      INT,
    period     INT,  
-   v    double DEFAULT  NULL
+   v    double precision DEFAULT  NULL
    );")
 dbGetQuery(con, "CREATE INDEX Mindex_id     ON M (id);")
 dbGetQuery(con, "CREATE INDEX Mindex_year   ON M (year);")
@@ -80,10 +80,10 @@ if(dbExistsTable(con, "U")) dbRemoveTable(con, "U")
  # tz not tested yet. Not sure about period.  
  dbGetQuery(con, "create table U (
    id	      VARCHAR(40),
-   date	      DATETIME,
+   date	      TIMESTAMP,
    tz         VARCHAR(4),    
    period     INT,         
-   v    double DEFAULT  NULL
+   v    double precision DEFAULT  NULL
    );")
 dbGetQuery(con, "CREATE INDEX Uindex_id     ON U (id);")
 dbGetQuery(con, "CREATE INDEX Uindex_date   ON U (date);")
@@ -98,7 +98,7 @@ dbGetQuery(con, "create table Q (
    id	      VARCHAR(40),
    year	      INT,
    period     INT,  
-   v    double DEFAULT  NULL
+   v    double precision DEFAULT  NULL
    );")
 dbGetQuery(con, "CREATE INDEX Qindex_id     ON Q (id);")
 dbGetQuery(con, "CREATE INDEX Qindex_year   ON Q (year);")
@@ -112,7 +112,7 @@ dbGetQuery(con, "create table S (
    id	      VARCHAR(40),
    year	      INT,
    period     INT,  
-   v    double DEFAULT  NULL
+   v    double precision DEFAULT  NULL
    );")
 dbGetQuery(con, "CREATE INDEX Sindex_id     ON S (id);")
 dbGetQuery(con, "CREATE INDEX Sindex_year   ON S (year);")
@@ -126,7 +126,7 @@ dbGetQuery(con, "create table W (
    id	      VARCHAR(40),
    date	      DATE,
    period     INT,  
-   v    double DEFAULT  NULL
+   v    double precision DEFAULT  NULL
    );")
 dbGetQuery(con, "CREATE INDEX Windex_id     ON W (id);")
 dbGetQuery(con, "CREATE INDEX Windex_date   ON W (date);")
@@ -139,7 +139,7 @@ if(dbExistsTable(con, "I")) dbRemoveTable(con, "I")
 dbGetQuery(con, "create table I (
    id	      VARCHAR(40),
    date	      DATE,
-   v    double DEFAULT  NULL
+   v    double precision DEFAULT  NULL
    );")
 dbGetQuery(con, "CREATE INDEX Iindex_id     ON I (id);")
 dbGetQuery(con, "CREATE INDEX Iindex_date   ON I (date);")
@@ -153,8 +153,8 @@ if(dbExistsTable(con, "T")) dbRemoveTable(con, "T")
 
 dbGetQuery(con, "create table T (
    id    VARCHAR(40),
-   date  DATETIME,
-   v     double DEFAULT  NULL
+   date  TIMESTAMP,
+   v     double precision DEFAULT  NULL
    );")
 dbGetQuery(con, "CREATE INDEX Tindex_id   ON T (id);")
 dbGetQuery(con, "CREATE INDEX Tindex_date ON T (date);")

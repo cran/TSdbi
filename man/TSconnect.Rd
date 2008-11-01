@@ -1,17 +1,20 @@
 \name{TSconnect}
 \alias{TSconnect}
 \alias{TSconnect,character,character-method}
-\alias{TSdbOptions-class}
-\alias{show,TSdbOptions-method}
-\alias{print,TSdbOptions-method}
+\alias{TSdb-class}
+\alias{TSid-class}
+\alias{show,logicalId-method}
+\alias{show,TSdb-method}
+\alias{print,TSdb-method}
 
 \title{Connect to a Time Series Database}
 \description{Return a connection to a time series database}
 \usage{
     TSconnect(drv, dbname, ...)
     \S4method{TSconnect}{character,character}(drv, dbname, ...)
-    \S4method{show}{TSdbOptions}(object)
-    \S4method{print}{TSdbOptions}(x, ...)
+    \S4method{show}{logicalId}(object)
+    \S4method{show}{TSdb}(object)
+    \S4method{print}{TSdb}(x, ...)
 }
 \arguments{
     \item{drv}{A database connection driver or character string.}

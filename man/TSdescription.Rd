@@ -3,13 +3,25 @@
 \alias{TSdescription,character,missing-method}
 \alias{TSdescription,character,ANY-method}
 \alias{TSdescription,ANY,missing-method}
+\alias{TSdescription,missing,ANY-method}
+\alias{TSdescription,missing,missing-method}
 \alias{TSdescription<-}
 
 \alias{TSdoc}
 \alias{TSdoc,character,missing-method}
 \alias{TSdoc,character,ANY-method}
 \alias{TSdoc,ANY,missing-method}
+\alias{TSdoc,missing,ANY-method}
+\alias{TSdoc,missing,missing-method}
 \alias{TSdoc<-}
+
+\alias{TSlabel}
+\alias{TSlabel,character,missing-method}
+\alias{TSlabel,character,ANY-method}
+\alias{TSlabel,ANY,missing-method}
+\alias{TSlabel,missing,ANY-method}
+\alias{TSlabel,missing,missing-method}
+\alias{TSlabel<-}
 
 \alias{TSmeta-class}
 \alias{TSmeta}
@@ -17,54 +29,60 @@
 \alias{TSmeta,character,ANY-method}
 \alias{TSmeta,ANY,missing-method}
 \alias{TSmeta<-}
-\alias{show,TSmeta-method}
-\alias{print,TSmeta-method}
 
 \alias{TSexists}
 \alias{TSexists,default-method}
 
-\alias{TSrefPeriod}
-\alias{TSrefPeriod,default-method}
-\alias{TSrefPeriod<-}
+\alias{TSrefperiod}
+\alias{TSrefperiod,default-method}
+\alias{TSrefperiod<-}
 
 
 \title{Specific Methods for Documenting Data}
 \description{See the generic function description.}
 \usage{
-    \S4method{show}{TSmeta}(object)
-    \S4method{print}{TSmeta}(x, ...)
-
-    TSexists(serIDs, con=options()$TSconnection, ...)
-    \S4method{TSexists}{default}(serIDs, con=options()$TSconnection, ...)
+    TSexists(serIDs, con=getOption("TSconnection"), ...)
+    \S4method{TSexists}{default}(serIDs, con=getOption("TSconnection"), ...)
 
     TSmeta(x, con, ...) 
-    \S4method{TSmeta}{character,missing}(x, con=options()$TSconnection, ...)
-    \S4method{TSmeta}{character,ANY}(x, con=options()$TSconnection, ...)
+    \S4method{TSmeta}{character,missing}(x, con=getOption("TSconnection"), ...)
+    \S4method{TSmeta}{character,ANY}(x, con=getOption("TSconnection"), ...)
     \S4method{TSmeta}{ANY,missing}(x, con, ...)
 
     TSmeta(x) <- value
 
     TSdescription(x, con, ...) 
-    \S4method{TSdescription}{character,missing}(x, con=options()$TSconnection, ...)
-    \S4method{TSdescription}{character,ANY}(x, con=options()$TSconnection, ...)
+    \S4method{TSdescription}{character,missing}(x, con=getOption("TSconnection"), ...)
+    \S4method{TSdescription}{character,ANY}(x, con=getOption("TSconnection"), ...)
     \S4method{TSdescription}{ANY,missing}(x, con, ...)
+    \S4method{TSdescription}{missing,ANY}(x, con, serIDs, ...)
+    \S4method{TSdescription}{missing,missing}(x, serIDs, ...)
     TSdescription(x) <- value
 
     TSdoc(x, con, ...) 
-    \S4method{TSdoc}{character,missing}(x, con=options()$TSconnection, ...)
-    \S4method{TSdoc}{character,ANY}(x, con=options()$TSconnection, ...)
+    \S4method{TSdoc}{character,missing}(x, con=getOption("TSconnection"), ...)
+    \S4method{TSdoc}{character,ANY}(x, con=getOption("TSconnection"), ...)
     \S4method{TSdoc}{ANY,missing}(x, con, ...)
+    \S4method{TSdoc}{missing,ANY}(x, con, serIDs, ...)
+    \S4method{TSdoc}{missing,missing}(x, serIDs, ...)
     TSdoc(x) <- value
 
-    TSrefPeriod(x)
-    \S4method{TSrefPeriod}{default}(x)
-    TSrefPeriod(x) <- value
+    TSlabel(x, con, ...) 
+    \S4method{TSlabel}{character,missing}(x, con=getOption("TSconnection"), ...)
+    \S4method{TSlabel}{character,ANY}(x, con=getOption("TSconnection"), ...)
+    \S4method{TSlabel}{ANY,missing}(x, con, ...)
+    \S4method{TSlabel}{missing,ANY}(x, con, serIDs, ...)
+    \S4method{TSlabel}{missing,missing}(x, serIDs, ...)
+    TSlabel(x) <- value
+
+    TSrefperiod(x)
+    \S4method{TSrefperiod}{default}(x)
+    TSrefperiod(x) <- value
 }
 \arguments{
     \item{con}{A database connection.}
     \item{serIDs}{identifiers for series on the database.}
     \item{x}{a time series data object or an identifier for a series on the database.}
-    \item{object}{an object to display.}
     \item{value}{a character string (or vector of character strings).}
     \item{...}{arguments passed to other methods.}
     }
