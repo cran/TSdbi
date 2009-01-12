@@ -1,6 +1,6 @@
 Package: TSdbi
-Version:2008.11-1
-Date:2008-11-1
+Version:2009.1-1
+Date:2009-1-12
 Title: Time Series Database Interface
 Description: TSdbi provides a common interface to time series databases. The
 	objective is to define a standard interface so users can retrieve time 
@@ -19,4 +19,4 @@ License: GPL-2
 Author: Paul Gilbert <pgilbert@bank-banque-canada.ca>
 Maintainer: Paul Gilbert <pgilbert@bank-banque-canada.ca>
 URL: http://www.bank-banque-canada.ca/pgilbert
-Packaged: Sat Nov  1 12:07:31 2008; paul
+Packaged: Tue Jan 13 11:53:44 2009; gilp

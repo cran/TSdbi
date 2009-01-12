@@ -171,7 +171,7 @@ if( "SQLiteConnection" != class(con)) { #SQLite does not seem to support this
   dbGetQuery(con, "SELECT COLUMN_NAME, COLUMN_DEFAULT, COLLATION_NAME, DATA_TYPE,
          CHARACTER_SET_NAME, CHARACTER_MAXIMUM_LENGTH, NUMERIC_PRECISION
             FROM INFORMATION_SCHEMA.Columns WHERE table_name='A' ;"), silent=TRUE )
-  if(inherits(z, "try-error")) warning(
-    "INFORMATION_SCHEMA query error. User may not have permission. Message: ", z)
+  if(inherits(z, "try-error")) cat(
+    "INFORMATION_SCHEMA query problem. (User may not have permission.)\n")
   else print(z)
  }

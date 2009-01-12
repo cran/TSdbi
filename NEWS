@@ -11,6 +11,11 @@ KNOWN BUGS
     o See also TO DO below.
 
 
+CHANGES IN TSdbi VERSION 2008.x-x
+
+    o  Aliases for panels and vintages should now resolve properly (they did 
+       not, other than "current").
+
 CHANGES IN TSdbi VERSION 2008.11-1
 
     o  A mechanism has been added for (optionally) allowing different vintages 
