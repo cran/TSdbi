@@ -32,7 +32,9 @@ if(require("tseries") &&  !inherits(
    tfplot(x, Title="IBM", start="2007-01-01")
 
    #Daily
-   x <- get.hist.quote(instrument="EUR/USD", provider="oanda", start="2004-01-01")
+   # oanda has max 500 data points
+   x <- get.hist.quote(instrument="EUR/USD", provider="oanda",
+            start=Sys.Date() - 495)
 
    if( ! TSput(x, serIDs="EUR/USD", con, Table="D")
       ) stop("Error putting EUR/USD Daily series on test db.")

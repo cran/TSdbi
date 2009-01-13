@@ -125,26 +125,48 @@ setMethod("TSdescription",   signature(x="missing", con="missing"),
 	else TSdescription(x=serIDs, ...)
 	})
 
-# a little internal utility to construct WHERE
-setWhere <- function(con, x, vintage, panel) {
-     if(con@hasPanels   && is.null(panel))   stop("default panel is not set.") 
-     if(con@hasVintages) {
-       if(is.null(vintage))	vintage <- "current" 
-       if("current" == vintage) vintage <- dbGetQuery(con,
-   	   "SELECT vintage  FROM vintageAlias WHERE alias='current';" )$vintage
-       }
-     where <-  paste(" WHERE id = '", x, "'", sep="")
-     if(!is.null(vintage)) where <- paste(where, " AND vintage='", vintage, "'", sep="")
-     if(!is.null(panel))   where <- paste(where, " AND panel='",   panel,   "'", sep="")
-     where
-     }
+# internal utilities to construct WHERE
+
+realVintage <- function(con, vintage) {
+   # replace alias with canonical name if necessary
+   if(!con@hasVintages) return(vintage) #usually NULL in this case 
+   if(is.null(vintage)) q <- 
+     "SELECT vintage  FROM vintageAlias WHERE alias='current';" 
+   else q <- paste(
+     "SELECT vintage  FROM vintageAlias WHERE alias='",vintage,"';", sep="") 
+
+   realVintage <- dbGetQuery(con,q )$vintage
+   # if alias result is empty assume vintage is already the real one.
+   if (0== NROW(realVintage)) vintage else realVintage
+   }
+
+realPanel <- function(con, panel) {
+   # replace alias with canonical name if necessary
+   if(!con@hasPanels) return(panel) #usually NULL in this case
+   if(is.null(panel)) stop("panel must be specified")
+   q <- paste("SELECT panel  FROM panelAlias WHERE alias='",panel,"';", sep="") 
+
+   realPanel <- dbGetQuery(con,q )$panel
+   # if alias result is empty assume panel is already the real one.
+   if (0== NROW(realPanel)) panel else realPanel
+   }
+
+setWhere <- function(con, x, realVintage, realPanel) {
+   where <-  paste(" WHERE id = '", x, "'", sep="")
+   if(!is.null(realVintage))
+      where <- paste(where, " AND vintage='", realVintage, "'", sep="")
+   if(!is.null(realPanel)) 
+      where <- paste(where, " AND panel='",   realPanel,   "'", sep="")
+   where
+   }
 
 TSdescriptionSQL <-  function(x=NULL, con=getOption("TSconnection"), 
        vintage=getOption("TSvintage"), panel=getOption("TSpanel"), 
        lang=getOption("TSlang"), ...) {	    
             r <- dbGetQuery(con, paste("SELECT description", lang, 
-	            "  FROM Meta ", setWhere(con, x, vintage, panel), 
-		    ";", sep=""))[[1]]
+	            "  FROM Meta ", setWhere(con, x, 
+		        realVintage(con, vintage),
+		        realPanel(con,panel)), ";", sep=""))[[1]]
 	    # r should already be char, but odbc converts NA to logical
 	    if(is.null(r))  as(NA, "character") else as(r, "character")
 	    }
@@ -194,8 +216,9 @@ TSdocSQL <-  function(x=NULL, con=getOption("TSconnection"),
        lang=getOption("TSlang"), ...) {
             if(1 < length(x)) stop("One series only for TSdoc")
             r <- dbGetQuery(con, paste("SELECT documentation", lang, 
-	            "  FROM Meta ", setWhere(con, x, vintage, panel), 
-		    ";", sep=""))[[1]]
+	            "  FROM Meta ", setWhere(con, x, 
+		        realVintage(con, vintage),
+		        realPanel(con,panel)), ";", sep=""))[[1]]
 	    # r should already be char, but odbc converts NA to logical
 	    if(is.null(r))  as(NA, "character") else as(r, "character")
 	    }
@@ -246,8 +269,9 @@ TSlabelSQL <-  function(x=NULL, con=getOption("TSconnection"),
             if(1 < length(x)) stop("One series only for TSlabel")
 	    #  NOT YET
             #r <- dbGetQuery(con, paste("SELECT label", lang, 
-	    #        "  FROM Meta ", setWhere(con, x, vintage, panel), 
-	    #        ";", sep=""))[[1]]
+	    #        "  FROM Meta ", setWhere(con, x, 
+	    #            realVintage(con, vintage),
+	    #	         realPanel(con,panel)), ";", sep=""))[[1]]
 	    ## r should already be char, but odbc converts NA to logical
 	    #if(is.null(r)) as(NA, "character") else as(r, "character")
 	    as(NA, "character")
@@ -319,12 +343,8 @@ TSputSQL <- function(x, serIDs=seriesNames(x), con, Table=NULL,
   # should rollback meta when data put fails
   #  (reversing order of M and P would mean data can change and 
   #    then meta fail, which seems worse.)
-  if(con@hasPanels   && is.null(panel))   stop("default panel is not set.") 
-  if(con@hasVintages) {
-    if(is.null(vintage))     vintage <- "current" 
-    if("current" == vintage) vintage <- dbGetQuery(con,
-     	"SELECT vintage  FROM vintageAlias WHERE alias='current';" )$vintage
-    }
+  panel <- realPanel(con,panel)
+  vintage <- realVintage(con,vintage) 
   # M does the write to Meta, P writes values to data table.
 
   # Column order could be specified after Meta, but this assumes  order
@@ -477,7 +497,9 @@ setMethod("TSdelete",   signature(serIDs="character", con="ANY"),
 TSdeleteSQL <- function(serIDs, con=getOption("TSconnection"),  
    vintage=getOption("TSvintage"), panel=getOption("TSpanel"), ...) {
      for (i in seq(length(serIDs))) {
-     	where <-  setWhere(con, serIDs[i], vintage, panel)
+     	where <-  setWhere(con, serIDs[i],  
+		        realVintage(con, vintage),
+		        realPanel(con,panel))
      	q <- dbGetQuery(con, paste("SELECT tbl  FROM Meta ",where, ";"))
      	 if(0 != length(q)) {
      	   dbGetQuery(con, paste("DELETE FROM ", q$tbl, where, ";")) 
@@ -514,12 +536,8 @@ TSgetSQL <- function(serIDs, con, TSrepresentation=getOption("TSrepresentation")
   # so far I think this is generic to all SQL.
   if(is.null(TSrepresentation)) TSrepresentation <- "default"
 
-  if(con@hasPanels   && is.null(panel))   stop("default panel is not set.") 
-  if(con@hasVintages) {
-    if(is.null(vintage))     vintage <- "current" 
-    if("current" == vintage) vintage <- dbGetQuery(con,
-     	"SELECT vintage  FROM vintageAlias WHERE alias='current';" )$vintage
-    }
+  panel <- realPanel(con,panel)
+  vintage <- realVintage(con,vintage) 
     
   Q <- function(q) {# local function
       res <- dbGetQuery(con, q)
@@ -639,7 +657,9 @@ TSdatesSQL <- function(serIDs, con,
   st <- en <- list()
   for (i in seq(length(serIDs))) {
     q <- dbGetQuery(con, paste("SELECT id, tbl, refperiod  FROM Meta ", 
-                    setWhere(con, serIDs[i], vintage,panel), ";", sep=""))
+                    setWhere(con, serIDs[i],  
+		        realVintage(con, vintage),
+		        realPanel(con,panel)), ";", sep=""))
     if(0==length(q)) {
         av <- c(av, FALSE)
 	st <- append(st, list(NA))

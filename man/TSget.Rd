@@ -56,8 +56,8 @@ defaults for these with, for example, \code{options(TSvintage="current")} and
 \code{options(TSpanel="Canada")}. The default specification has to be supported
 by the database for this to work.
 
-\code{names}, \code{TSdescription} and 
-\code{documentation} can also be specified as arguments.
+\code{names}, \code{TSdescription}, 
+\code{TSdoc} and\code{TSlabel} can also be specified as arguments.
 (Passed in \dots). See \code{\link{TSputSQL}} for more details.
 }
 
