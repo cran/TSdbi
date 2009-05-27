@@ -16,13 +16,17 @@ library("TSdbi")
 
 The TSdbi package provides the common parts of an interface to time series
 databases. To use this package it is necessary to also have one of the database
-specific packages, such as  TSMySQL, TSSQLite, TSPostgreSQL, TSodbc or TSpadi. 
-More extensive vignette examples are provided in each of those packages. 
+specific packages, such as  TShistQuote, TSMySQL, TSSQLite, TSPostgreSQL, 
+TSodbc, TSfame, or TSpadi. 
+More extensive vignette examples, which will be interesting from a
+user's perspective,  are provided in each of those packages. 
 (The vignettes are
-similar, but do not build without one of the database specific packages.)
+similar, but do not build without one of the database specific packages.) The
+documentation below is intended for an administrator who needs to set up
+an SQL version of the database.
 
-The interface works with some databases that are not SQL, but for SQL databases
-the instructions below, and the examples in the database
+The \textsl{TSdbi} interface works with some databases that are not SQL, 
+but for SQL databases the instructions below, and the examples in the database
 specific packages, provide details for setting up the backend database server
 tables.
 

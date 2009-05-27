@@ -1,6 +1,7 @@
 \name{TSconnect}
 \alias{TSconnect}
 \alias{TSconnect,character,character-method}
+\alias{conType-class}
 \alias{TSdb-class}
 \alias{TSid-class}
 \alias{show,logicalId-method}
