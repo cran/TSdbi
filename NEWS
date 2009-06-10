@@ -11,10 +11,29 @@ KNOWN BUGS
     o See also TO DO below.
 
 
-CHANGES IN TSdbi VERSION 2008.x-x
+CHANGES IN TSdbi VERSION 2009.5-2
+
+    o  Added optional names argument to TSquery, to give series names to 
+       returned series. 
+
+    o  TSquery was extended to allow generating daily series. 
+
+CHANGES IN TSdbi VERSION 2009.5-1
+
+    o  Added class conType which is inherited by connections for specific
+         drivers, so that some methods (in progress) can abstract from the 
+	 specific driver. 
+
+CHANGES IN TSdbi VERSION 2009.1-1
+
+    o  Added checks in several TS* packages to verify if a service is 
+        available on the testing host (e.g. CRAN). 
+
+    o  Minor documentation fixes found by new R-devel parsing. 
 
     o  Aliases for panels and vintages should now resolve properly (they did 
        not, other than "current").
+
 
 CHANGES IN TSdbi VERSION 2008.11-1
 

@@ -1,8 +1,13 @@
-.onLoad <- function(library, section) {require("methods")}
+#.onLoad <- function(library, section) {require("methods")}
 
 #setClassUnion("OptionalPOSIXct",   c("POSIXct",   "NULL"))
 # bug work around
 setClassUnion("OptionalPOSIXct",   c("POSIXct",   "logical"))
+
+
+# inherit this into TSconnections so methods can abstract  from
+#   specific drivers 
+setClass("conType", representation( drv="character"), "VIRTUAL" )
 
 # this just has db info
 setClass("TSdb", representation( dbname="character", 

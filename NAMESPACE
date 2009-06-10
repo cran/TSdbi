@@ -17,6 +17,7 @@ export(
 
 ## S4 Classes
 exportClasses(
+   "conType",
    "TSdb",
    "TSid",
    "TSmeta",
