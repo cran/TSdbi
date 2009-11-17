@@ -15,10 +15,9 @@ protoocol for now, but directly should be possible with some work).
 \details{
 \tabular{ll}{
 Package: \tab TSdbi\cr
-Depends: \tab R (>= 2.5.0), GPArotation, setRNG (>= 2004.4-1), tframe (>=
-2007.5-2),\cr
-         \tab dse1 (>= 2007.5-2), dse2 (>= 2007.5-2)\cr
-Suggests: \tab CDNmoney\cr
+Depends: \tab R (>= 2.5.0), methods, tframe (>= 2008.5-1)\cr
+Imports: \tab methods, DBI\cr
+Suggests:\tab zoo, tseries\cr
 License: \tab GPL Version 2.\cr
 URL: \tab http://www.bank-banque-canada.ca/pgilbert\cr
 }
