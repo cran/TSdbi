@@ -1,101 +1,111 @@
-   (See  TO DO below, and also the separate README file.)
+See also
+
+   o	To Do below
+
+   o	The separate README file.
    
-KNOWN BUGS
+Known BUGS
 
-    o Warning messages about "show" are diplayed when some of the plugin
-      packages are attached. 
+   o	There is a warning message about ambiguous slot choice in the integer 
+	coercion of the connection con. (This is a bug in DBI packages.)
 
-    o There is a warning message about ambiguous slot choice in the integer 
-      coercion of the connection con. (This is a bug in DBI packages.)
+Changes in TSdbi version 2009.11-1
 
-    o See also TO DO below.
-
-
-CHANGES IN TSdbi VERSION 2009.5-2
-
-    o  Added optional names argument to TSquery, to give series names to 
-       returned series. 
-
-    o  TSquery was extended to allow generating daily series. 
-
-CHANGES IN TSdbi VERSION 2009.5-1
-
-    o  Added class conType which is inherited by connections for specific
-         drivers, so that some methods (in progress) can abstract from the 
-	 specific driver. 
-
-CHANGES IN TSdbi VERSION 2009.1-1
-
-    o  Added checks in several TS* packages to verify if a service is 
-        available on the testing host (e.g. CRAN). 
-
-    o  Minor documentation fixes found by new R-devel parsing. 
-
-    o  Aliases for panels and vintages should now resolve properly (they did 
-       not, other than "current").
+   o	Removed namespace export of "show", which seemed to be the cause of the
+   	warning messages about "replacing previous import: show" when other
+	packages require TSdbi.
 
 
-CHANGES IN TSdbi VERSION 2008.11-1
+Changes in TSdbi version 2009.5-2
 
-    o  A mechanism has been added for (optionally) allowing different vintages 
-       and panels of the data series. (e.g. series with the same identifier 
-       but a different release date or country).
+   o	Added optional names argument to TSquery, to give series names to 
+	returned series. 
 
-    o  More database plugins have been added  (PostgreSQL, ODBC, Fame). 
+   o	TSquery was extended to allow generating daily series. 
 
-    o  A mechanism to support multilingual documentation as been added (but not
-       yet well tested).
+
+Changes in TSdbi version 2009.5-1
+
+   o	Added class conType which is inherited by connections for specific
+	drivers, so that some methods (in progress) can abstract from the 
+	specific driver. 
+
+
+Changes in TSdbi version 2009.1-1
+
+   o	Added checks in several TS* packages to verify if a service is 
+	available on the testing host (e.g. CRAN). 
+
+   o	Minor documentation fixes found by new R-devel parsing. 
+
+   o	Aliases for panels and vintages should now resolve properly (they did 
+	not, other than "current").
+
+
+Changes in TSdbi version 2008.11-1
+
+   o	A mechanism has been added for (optionally) allowing different vintages 
+	and panels of the data series. (e.g. series with the same identifier 
+	but a different release date or country).
+
+   o	More database plugins have been added  (PostgreSQL, ODBC, Fame). 
+
+   o	A mechanism to support multilingual documentation as been added (but not
+	yet well tested).
  
-    o  The is support to specify what time series representation should be 
-       returned.
+   o	The is support to specify what time series representation should be 
+	returned.
 
-    o  Vignettes have been expanded.
+   o	Vignettes have been expanded.
 
-    o  The class representation of some objects was cleaned up and improved.
+   o	The class representation of some objects was cleaned up and improved.
 
-    o renamed class TSdbOptions to TSdb and change TS*Connection classes to
-      include it in their representation rather than with contains.
+   o	renamed class TSdbOptions to TSdb and change TS*Connection classes to
+	include it in their representation rather than with contains.
 
-    o changed fields refPeriod to refperiod in tables to avoid capitalization 
-      issues among SQL version. Changed TSrefPeriod to TSrefperiod to avoid 
-      confusion.
+   o	changed fields refPeriod to refperiod in tables to avoid capitalization 
+	issues among SQL version. Changed TSrefPeriod to TSrefperiod to avoid 
+	confusion.
 
-    o changed tables Panels to panels and Vintages to vintages, to avoid
-      confusion, but tables do not seem to suffer from the capitalization issue.  
+   o	changed tables Panels to panels and Vintages to vintages, to avoid
+	confusion, but tables do not seem to suffer from the capitalization issue.  
 
-    o changed "double" to "double precision" and DATETIME to TIMESTAMP in 
-      inst/TSsql/CreateTables.TSsql as these work in other SQL versions 
-      as well as MySQL.
-
-CHANGES IN TSdbi VERSION 2008.8-1
-
-    o adjusted TSquery to use standard sql extract(YEAR rather than mysql YEAR(.
-
-    o fixed bug in TSquery for case of a query returning only one period. 
+   o	changed "double" to "double precision" and DATETIME to TIMESTAMP in 
+	inst/TSsql/CreateTables.TSsql as these work in other SQL versions 
+	as well as MySQL.
 
 
-CHANGES IN TSdbi VERSION 2008.5-1
+Changes in TSdbi version 2008.8-1
 
-    o Work around for bug in R 2.7.0 
+   o	adjusted TSquery to use standard sql extract(YEAR rather than mysql YEAR(.
 
-    o Added TSquery (even though it is not logically part of this package). 
-
-    o Misc. clean up of beta. 
-
-    o vintages is working but not carefully tested. Panels may be working, but
-      not at all tested.
-
-CHANGES IN TSdbi VERSION 2007.10-1
-
-    o This is an beta version.
+   o	fixed bug in TSquery for case of a query returning only one period. 
 
 
-TO DO
+Changes in TSdbi version 2008.5-1
 
-- a mechanism for handling aliases for series names.
+   o	Work around for bug in R 2.7.0 
 
-- rollback meta when data put fails
+   o	Added TSquery (even though it is not logically part of this package). 
 
-- mechanism for signaling series updates to users
+   o	Misc. clean up of beta. 
 
-- extend to series constructed from different SQL field formats.
+   o	vintages is working but not carefully tested. Panels may be working, but
+	not at all tested.
+
+
+Changes in TSdbi version 2007.10-1
+
+   o	This is a beta version.
+
+   o	This is a beta version.
+
+To Do
+
+   o	a mechanism for handling aliases for series names.
+
+   o	rollback meta when data put fails
+
+   o	mechanism for signaling series updates to users
+
+   o	extend to series constructed from different SQL field formats.

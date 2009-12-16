@@ -27,7 +27,7 @@ exportClasses(
 ## S4 generics
 export(
    ##"print",
-   "show",
+   ##"show",
    "TSconnect",
    "TSget",
    "TSput",
