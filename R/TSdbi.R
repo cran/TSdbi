@@ -543,7 +543,10 @@ TSgetSQL <- function(serIDs, con, TSrepresentation=getOption("TSrepresentation")
 
   panel <- realPanel(con,panel)
   vintage <- realVintage(con,vintage) 
-    
+
+  if ( 1 < sum(c(length(serIDs), length(panel), length(vintage)) > 1))
+   stop("Only one of serIDs, panel, or vintage can have length greater than 1.")
+
   Q <- function(q) {# local function
       res <- dbGetQuery(con, q)
       if(any(dim(res) == 0)) stop("empty query result.")
@@ -554,7 +557,8 @@ TSgetSQL <- function(serIDs, con, TSrepresentation=getOption("TSrepresentation")
   # if series are in "A", "Q", "M","S" use  ts otherwise zoo.
   for (i in seq(length(serIDs))) {
     where <-  setWhere(con, serIDs[i], vintage, panel)
-    q <- dbGetQuery(con, paste("SELECT tbl, refperiod  FROM Meta ",where, ";"))
+    for (j in seq(length(where))) {
+    q <- dbGetQuery(con, paste("SELECT tbl, refperiod  FROM Meta ",where[j], ";"))
     if(0 == NROW(q$tbl)) stop("Meta lookup for series ",
            serIDs[i], " table result empty. Series does not exist on database.")
 
@@ -569,51 +573,51 @@ TSgetSQL <- function(serIDs, con, TSrepresentation=getOption("TSrepresentation")
     rp <- c(rp, q$refperiod)
 
     if (tbl=="A") 
-      {res <- Q(paste("SELECT year, v FROM A ",where, " order by year;"))
+      {res <- Q(paste("SELECT year, v FROM A ",where[j], " order by year;"))
        r   <- ts(res[,2], start=c(res[1,1], 1), frequency=1) 
        if(useZoo) r <- as.zoo(r)
      }
     else if (tbl=="Q")  
-      {res <- Q(paste("SELECT year, period, v FROM Q ",where, " order by year, period;"))
+      {res <- Q(paste("SELECT year, period, v FROM Q ",where[j], " order by year, period;"))
        r   <- ts(res[,3], start=c(res[1,1:2]), frequency=4) 	 
        if(useZoo) r <- as.zoo(r)
       }
     else if (tbl=="M")
-      {res <- Q(paste("SELECT year, period, v FROM M ",where, " order by year, period;"))
+      {res <- Q(paste("SELECT year, period, v FROM M ",where[j], " order by year, period;"))
        r   <- ts(res[,3], start=c(res[1,1:2]), frequency=12)	 
        if(useZoo) r <- as.zoo(r)
       }
     else if (tbl=="W") 
-      {res <- Q(paste("SELECT date, period, v FROM W ",where, " order by date;"))
+      {res <- Q(paste("SELECT date, period, v FROM W ",where[j], " order by date;"))
        r   <- zoo(as.numeric(res[,3]), as.Date(res[,1]))
        # period is as.int(res[,2]) 	 
       }
     else if (tbl=="B") 
-      {res <- Q(paste("SELECT date, period, v FROM B ",where, " order by date;"))
+      {res <- Q(paste("SELECT date, period, v FROM B ",where[j], " order by date;"))
        r   <- zoo(as.numeric(res[,3]), as.Date(res[,1]))
        # period is as.int(res[,2]) 	 
       }
     else if (tbl=="D")  
-      {res <- Q(paste("SELECT date, period, v FROM D ",where, " order by date;"))
+      {res <- Q(paste("SELECT date, period, v FROM D ",where[j], " order by date;"))
        r   <- zoo(as.numeric(res[,3]), as.Date(res[,1]))
        # period is as.int(res[,2]) 	 
       }
     else if (tbl=="S")    
-      {res <- Q(paste("SELECT year, period, v FROM S ",where, " order by year, period;"))
+      {res <- Q(paste("SELECT year, period, v FROM S ",where[j], " order by year, period;"))
        r   <- ts(res[,3], start=c(res[1,1:2]), frequency=2)	 
        if(useZoo) r <- as.zoo(r)
       }
     else if (tbl=="U")  
-      {res <- Q(paste("SELECT date, tz, period, v FROM U ",where, " order by date;"))
+      {res <- Q(paste("SELECT date, tz, period, v FROM U ",where[j], " order by date;"))
        r   <- zoo(as.numeric(res[,4]), as.Date(res[,1]))
        # tz ? period is as.int(res[,3]) 	 
       }
     else if (tbl=="I")  
-      {res <- Q(paste("SELECT date, v FROM I ",where, " order by date;"))
+      {res <- Q(paste("SELECT date, v FROM I ",where[j], " order by date;"))
        r   <- zoo(as.numeric(res[,2]), as.Date(res[,1]))
       }
     else if (tbl=="T")  
-      {res <- Q(paste("SELECT date, v FROM T ",where, " order by date;"))
+      {res <- Q(paste("SELECT date, v FROM T ",where[j], " order by date;"))
        r   <- zoo(as.numeric(res[,2]), as.POSIXct(res[,1]))
       }
     else stop("Specified table not found.", 
@@ -625,13 +629,18 @@ TSgetSQL <- function(serIDs, con, TSrepresentation=getOption("TSrepresentation")
     if(TSdoc)         doc  <- c(doc,  TSdoc(serIDs[i],con) ) # where?
     if(TSlabel)       label<- c(label,TSlabel(serIDs[i],con) ) # where?
     mat <- tbind(mat, r)
-    }
+    } # where[j]
+    } # serID[i]
   mat <- tfwindow(mat, tf=tf, start=start, end=end)
   if( (!all(is.na(rp))) && !all(rp == "	" ) ) TSrefperiod(mat) <- rp      
   
   if (! TSrepresentation  %in% c( "zoo", "default"))
       mat <- do.call(TSrepresentation, list(mat))   
-  seriesNames(mat) <- if(!is.null(names)) names else serIDs 
+
+  seriesNames(mat) <- if(!is.null(names)) names   else
+    if ( length(panel)   > 1 )            panel   else
+    if ( length(vintage) > 1 )           vintage  else  serIDs 
+
   TSmeta(mat) <- new("TSmeta", serIDs=serIDs, dbname=con@dbname, 
       conType=class(con), hasVintages=con@hasVintages, hasPanels=con@hasPanels, 
       DateStamp=NA, # bug in 2.7.0 =Sys.time(), 
@@ -665,13 +674,15 @@ TSdatesSQL <- function(serIDs, con,
                     setWhere(con, serIDs[i],  
 		        realVintage(con, vintage),
 		        realPanel(con,panel)), ";", sep=""))
-    if(0==length(q)) {
+    if(is.null(q) || nrow(q) == 0) {
         av <- c(av, FALSE)
 	st <- append(st, list(NA))
 	en <- append(en, list(NA))
 	tb <- rbind(tb, NA)
 	rP <- rbind(rP, NA)
 	}
+    else if(nrow(q) > 1)
+      warning("More than one series with the same identifier. Possible database corruption.")
     else  {
       q2 <-  TSget(serIDs=serIDs[i], con, ...)
       av <- c(av, TRUE)

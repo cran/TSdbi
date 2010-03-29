@@ -48,13 +48,20 @@ so that this is always passed as an argument to \code{TSget}.
 
 It is also possible to pass start, end, or tframe information to truncate the
 returned series. This is part of the \dots argument passed 
-to \code{tfwindow}. See\code{\link[tframe]{tfwindow}} for more details. By
+to \code{tfwindow}. See \code{\link[tframe]{tfwindow}} for more details. By
 default no truncation is applied.
 
 If the database supports vintages or panels then it is also possible to set
 defaults for these with, for example, \code{options(TSvintage="current")} and
 \code{options(TSpanel="Canada")}. The default specification has to be supported
 by the database for this to work.
+
+Also, if the database supports vintages or panels it is possible to give a
+vector value for one of \code{vintage} or \code{panel} as long as 
+\code{serIDs} is length \code{1}. (That is, only one of \code{serIDs}, 
+\code{vintage} or \code{panel} can have more than one element.)
+In this case, if \code{names} is not specified, \code{vintage} or \code{panel} 
+will be used for the series names in the returned time series matrix.
 
 \code{names}, \code{TSdescription}, 
 \code{TSdoc} and\code{TSlabel} can also be specified as arguments.
