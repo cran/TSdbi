@@ -9,6 +9,17 @@ Known BUGS
    o	There is a warning message about ambiguous slot choice in the integer 
 	coercion of the connection con. (This is a bug in DBI packages.)
 
+Changes in TSdbi version 2010.3-1
+
+   o	Fixed TSget to return matrix of series if panel of vintage is a vector.
+
+Changes in TSdbi version 2010.2-1
+
+   o	Fixed TSdates and test for existence of series with was using length()
+   	rather than nrow on the returned query, and failed in some cases 
+	with SQLite.  (Thanks to Felix Wittmann.)
+
+
 Changes in TSdbi version 2009.11-1
 
    o	Removed namespace export of "show", which seemed to be the cause of the
