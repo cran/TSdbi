@@ -14,25 +14,25 @@
     TSgetSQL(serIDs, con, TSrepresentation=getOption("TSrepresentation"),
        tf = NULL, start = tfstart(tf), end = tfend(tf), 
        names=NULL, TSdescription=FALSE, TSdoc=FALSE,  TSlabel=FALSE,
-       vintage=getOption("TSvintage"), panel=getOption("TSpanel"), ...)
+       vintage=getOption("TSvintage"), panel=getOption("TSpanel"))
 
     TSdatesSQL(serIDs, con, 
-       vintage=getOption("TSvintage"), panel=getOption("TSpanel"), ...)
+       vintage=getOption("TSvintage"), panel=getOption("TSpanel"))
     TSdeleteSQL(serIDs, con=getOption("TSconnection"), 
-       vintage=getOption("TSvintage"), panel=getOption("TSpanel"), ...) 
+       vintage=getOption("TSvintage"), panel=getOption("TSpanel")) 
     TSdescriptionSQL(x=NULL, con=getOption("TSconnection"), 
        vintage=getOption("TSvintage"), panel=getOption("TSpanel"),
-       lang=getOption("TSlang"), ...)
+       lang=getOption("TSlang"))
     TSdocSQL(x=NULL, con=getOption("TSconnection"), 
        vintage=getOption("TSvintage"), panel=getOption("TSpanel"),
-       lang=getOption("TSlang"), ...)
+       lang=getOption("TSlang"))
     TSlabelSQL(x=NULL, con=getOption("TSconnection"), 
        vintage=getOption("TSvintage"), panel=getOption("TSpanel"),
-       lang=getOption("TSlang"), ...)
+       lang=getOption("TSlang"))
 
     TSputSQL(x, serIDs=seriesNames(x), con,  Table=NULL,
        TSdescription.=TSdescription(x), TSdoc.=TSdoc(x),  TSlabel.=TSlabel(x), 
-       vintage=getOption("TSvintage"), panel=getOption("TSpanel"), ...)
+       vintage=getOption("TSvintage"), panel=getOption("TSpanel"))
 }
 \arguments{
     \item{con}{A database connection.}
@@ -53,7 +53,6 @@
          determined automatically).}
     \item{vintage}{Vintage to be supplied (if supported by db).}
     \item{panel}{Panel to be supplied (if supported by db).}
-    \item{...}{Arguments passed to TSgetSQL or other methods.}
 }
 \value{A time series matrix.}
 \details{

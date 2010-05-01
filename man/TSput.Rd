@@ -7,6 +7,8 @@
 \alias{TSdelete}
 \alias{TSdelete,character,missing-method}
 \alias{TSdelete,character,ANY-method}
+\alias{TSdelete,character,missing,ANY,ANY-method}
+\alias{TSdelete,character,ANY,ANY,ANY-method}
 \alias{TSreplace}
 \alias{TSreplace,default-method}
 
@@ -16,20 +18,45 @@
 \description{Write data to a server.}
 \usage{
     TSput(x, serIDs=seriesNames(x), con=getOption("TSconnection"), ...)
-    TSdelete(serIDs, con=getOption("TSconnection"), ...)
-    TSreplace(x, serIDs=seriesNames(x), con=getOption("TSconnection"), ...)
 
-    \S4method{TSput}{ANY,missing,missing}(x, serIDs=seriesNames(x), con=getOption("TSconnection"), ...)
-    \S4method{TSput}{ANY,DBIConnection,missing}(x, serIDs=seriesNames(x), con=getOption("TSconnection"), ...)
-    \S4method{TSput}{ANY,character,ANY}(x, serIDs=seriesNames(x), con=getOption("TSconnection"), ...)
-    \S4method{TSdelete}{character,missing}(serIDs, con=getOption("TSconnection"), ...)
-    \S4method{TSdelete}{character,ANY}(serIDs, con=getOption("TSconnection"), ...)
-    \S4method{TSreplace}{default}(x, serIDs=seriesNames(x), con=getOption("TSconnection"), ...)
+    TSdelete(serIDs, con=getOption("TSconnection"), 
+	vintage=getOption("TSvintage"), panel=getOption("TSpanel"), ...)
+
+    TSreplace(x, serIDs=seriesNames(x), con=getOption("TSconnection"), 
+	vintage=getOption("TSvintage"), panel=getOption("TSpanel"), ...)
+
+    \S4method{TSput}{ANY,missing,missing}(
+	x, serIDs=seriesNames(x), con=getOption("TSconnection"), ...)
+    \S4method{TSput}{ANY,DBIConnection,missing}(
+	x, serIDs=seriesNames(x), con=getOption("TSconnection"), ...)
+    \S4method{TSput}{ANY,character,ANY}(
+	x, serIDs=seriesNames(x), con=getOption("TSconnection"), ...)
+
+    \S4method{TSdelete}{character,missing}(
+	serIDs, con=getOption("TSconnection"), 
+	vintage=getOption("TSvintage"), panel=getOption("TSpanel"), ...)
+    \S4method{TSdelete}{character,ANY}(
+	serIDs, con=getOption("TSconnection"), 
+	vintage=getOption("TSvintage"), panel=getOption("TSpanel"), ...)
+    \S4method{TSdelete}{character,missing,ANY,ANY}(
+	serIDs, con=getOption("TSconnection"), 
+	vintage=getOption("TSvintage"), panel=getOption("TSpanel"), ...)
+    \S4method{TSdelete}{character,ANY,ANY,ANY}(
+	serIDs, con=getOption("TSconnection"), 
+	vintage=getOption("TSvintage"), panel=getOption("TSpanel"), ...)
+
+    \S4method{TSreplace}{default}(
+	x, serIDs=seriesNames(x), con=getOption("TSconnection"), 
+	vintage=getOption("TSvintage"), panel=getOption("TSpanel"), ...)
 }
 \arguments{
     \item{con}{A database connection.}
     \item{x}{time series data.}
     \item{serIDs}{identifiers for series on the database.}
+    \item{vintage}{character string indicating vintage of the series on the 
+        database (if supported by the database).}
+    \item{panel}{character string indicating panel of the series on the 
+        database (if supported by the database).}
     \item{...}{Arguments passed to other methods.}
 }
 
