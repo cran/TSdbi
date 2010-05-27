@@ -1,8 +1,9 @@
 
 TSquery <- function (select, dateField, table, where = NULL, 
        frequency = "monthly", na.as=0, names=NULL, con = options()$connection){
-    if (is.null(con)) 
-        stop("argument 'con' cannot be NULL")
+    if(missing(con)&& is.null(con)) 
+	  stop("con should be specified or set with options(connection=con). See ?TSquery.") 
+    if (is.null(con)) stop("argument 'con' cannot be NULL")
     if (frequency == "monthly") 
         dates <- paste("EXTRACT(YEAR from ",  dateField,
 	            "), EXTRACT(MONTH from ", dateField, ")")

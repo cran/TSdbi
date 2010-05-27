@@ -9,6 +9,30 @@ Known BUGS
    o	There is a warning message about ambiguous slot choice in the integer 
 	coercion of the connection con. (This is a bug in DBI packages.)
 
+Changes in TSdbi version 2010.5-1
+
+   o	Removed ... argument from standardSQL functions as these do not use the
+	argument, are not generics (and are not even exported).
+
+   o	Added arguments vintage and panel to TSdates() and TSexists() because of
+	bug caused by passing these in ... .
+
+   o	Fixed passing default con from generic to some methods.
+
+   o	Improved error message for Meta lookup failure with panels and vintages.
+
+   o	Improved error message in the case where con is not specified and the
+	default has not been set.
+
+   o	Modified vintage aliases to work for each series rather than globally. 
+	(So "current" might refer to different vintages for different series.)
+
+   o	Modified indication of whether a database supports vintages and panels
+	to use vintageAlias and panelAlias tables, since these are more
+	fundamental than vintages and panels tables (which are only used for
+	documentation of the vintages and panels).
+
+
 Changes in TSdbi version 2010.3-1
 
    o	Fixed TSget to return matrix of series if panel of vintage is a vector.

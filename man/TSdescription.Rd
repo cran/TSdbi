@@ -41,17 +41,20 @@
 \title{Specific Methods for Documenting Data}
 \description{See the generic function description.}
 \usage{
-    TSexists(serIDs, con=getOption("TSconnection"), ...)
-    \S4method{TSexists}{default}(serIDs, con=getOption("TSconnection"), ...)
+    TSexists(serIDs, con=getOption("TSconnection"),
+	vintage=getOption("TSvintage"), panel=getOption("TSpanel"), ...)
+    \S4method{TSexists}{default}(
+	serIDs, con=getOption("TSconnection"),
+	vintage=getOption("TSvintage"), panel=getOption("TSpanel"), ...)
 
-    TSmeta(x, con, ...) 
+    TSmeta(x, con=getOption("TSconnection"), ...) 
     \S4method{TSmeta}{character,missing}(x, con=getOption("TSconnection"), ...)
     \S4method{TSmeta}{character,ANY}(x, con=getOption("TSconnection"), ...)
     \S4method{TSmeta}{ANY,missing}(x, con, ...)
 
     TSmeta(x) <- value
 
-    TSdescription(x, con, ...) 
+    TSdescription(x, con=getOption("TSconnection"), ...) 
     \S4method{TSdescription}{character,missing}(x, con=getOption("TSconnection"), ...)
     \S4method{TSdescription}{character,ANY}(x, con=getOption("TSconnection"), ...)
     \S4method{TSdescription}{ANY,missing}(x, con, ...)
@@ -59,7 +62,7 @@
     \S4method{TSdescription}{missing,missing}(x, serIDs, ...)
     TSdescription(x) <- value
 
-    TSdoc(x, con, ...) 
+    TSdoc(x, con=getOption("TSconnection"), ...) 
     \S4method{TSdoc}{character,missing}(x, con=getOption("TSconnection"), ...)
     \S4method{TSdoc}{character,ANY}(x, con=getOption("TSconnection"), ...)
     \S4method{TSdoc}{ANY,missing}(x, con, ...)
@@ -67,7 +70,7 @@
     \S4method{TSdoc}{missing,missing}(x, serIDs, ...)
     TSdoc(x) <- value
 
-    TSlabel(x, con, ...) 
+    TSlabel(x, con=getOption("TSconnection"), ...) 
     \S4method{TSlabel}{character,missing}(x, con=getOption("TSconnection"), ...)
     \S4method{TSlabel}{character,ANY}(x, con=getOption("TSconnection"), ...)
     \S4method{TSlabel}{ANY,missing}(x, con, ...)
@@ -82,6 +85,10 @@
 \arguments{
     \item{con}{A database connection.}
     \item{serIDs}{identifiers for series on the database.}
+    \item{vintage}{character string indicating vintage of the series on the 
+        database (if supported by the database).}
+    \item{panel}{character string indicating panel of the series on the 
+        database (if supported by the database).}
     \item{x}{a time series data object or an identifier for a series on the database.}
     \item{value}{a character string (or vector of character strings).}
     \item{...}{arguments passed to other methods.}

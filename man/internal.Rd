@@ -6,7 +6,7 @@
 \description{set Where for database queries}
 \usage{
   setWhere(con, x, realVintage, realPanel)
-  realVintage(con, vintage)
+  realVintage(con, vintage, x)
   realPanel(con, panel)
 }
 \arguments{

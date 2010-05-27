@@ -11,10 +11,13 @@
 \title{Check Data Availability}
 \description{Check the dates for which date is available.}
 \usage{
-    TSdates(serIDs, con=getOption("TSconnection"), ...)
+    TSdates(serIDs, con=getOption("TSconnection"), 
+           vintage=getOption("TSvintage"), panel=getOption("TSpanel"), ...)
 
-    \S4method{TSdates}{character,missing}(serIDs, con=getOption("TSconnection"), ...)
-    \S4method{TSdates}{character,ANY}(serIDs, con=getOption("TSconnection"), ...)
+    \S4method{TSdates}{character,missing}(serIDs, con=getOption("TSconnection"),
+       vintage=getOption("TSvintage"), panel=getOption("TSpanel"), ...)
+    \S4method{TSdates}{character,ANY}(serIDs, con=getOption("TSconnection"),
+       vintage=getOption("TSvintage"), panel=getOption("TSpanel"), ...)
 
     \method{start}{TSdates}(x, ...)
     \method{tfstart}{TSdates}(x)
@@ -25,6 +28,10 @@
     \item{con}{A database connection.}
     \item{serIDs}{identifiers for series on the database.}
     \item{x}{an object returned by \code{TSdates}.}
+    \item{vintage}{character string indicating vintage of the series on the 
+        database (if supported by the database).}
+    \item{panel}{character string indicating panel of the series on the 
+        database (if supported by the database).}
     \item{...}{arguments passed to other methods.}
 }
 \value{depends.}
