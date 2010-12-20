@@ -59,7 +59,8 @@ exportMethods(
    "TSmeta",
    "TSdates",
    "TSdescription",
-   "TSdoc"
+   "TSdoc",
+   "dropTStable"
    )
 
 #S3method("print","TSmeta")

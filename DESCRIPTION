@@ -1,6 +1,6 @@
 Package: TSdbi
-Version: 2010.5-1
-Date: 2010-05-01
+Version: 2010.12-1
+Date: 2010-12-20
 Title: Time Series Database Interface
 Description: TSdbi provides a common interface to time series
         databases. The objective is to define a standard interface so
@@ -16,12 +16,12 @@ Description: TSdbi provides a common interface to time series
 Depends: R (>= 2.8.0), methods, tframe (>= 2008.5-1)
 Imports: methods, DBI
 Suggests: zoo, tseries
-License: GPL-2
+License: GPL-2 | file LICENSE
 Author: Paul Gilbert <pgilbert@bank-banque-canada.ca>
 Maintainer: Paul Gilbert <pgilbert@bank-banque-canada.ca>
 URL: http://www.bank-banque-canada.ca/pgilbert
 Repository: CRAN
 Repository/R-Forge/Project: tsdbi
-Repository/R-Forge/Revision: 132
-Date/Publication: 2010-05-27 06:55:43
-Packaged: 2010-05-16 20:43:18 UTC; rforge
+Repository/R-Forge/Revision: 199
+Date/Publication: 2010-12-22 08:57:35
+Packaged: 2010-12-19 21:43:20 UTC; rforge

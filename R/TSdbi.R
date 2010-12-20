@@ -590,10 +590,12 @@ TSgetSQL <- function(serIDs, con, TSrepresentation=getOption("TSrepresentation")
   for (i in seq(length(serIDs))) {
     where <-  setWhere(con, serIDs[i], vintage[i], panel)
     for (j in seq(length(where))) {
-    q <- dbGetQuery(con, paste("SELECT tbl, refperiod  FROM Meta ",where[j], ";"))
+    qq <- paste("SELECT tbl, refperiod  FROM Meta ",where[j], ";")
+    q <- dbGetQuery(con, qq)
     if(0 == NROW(q$tbl))
-       stop("Meta lookup for series ", serIDs[i], " failed. (Query ",
-	     where[j], " result empty.) Series does not exist on database.")
+       stop("Meta lookup for series ", serIDs[i], 
+            " failed. (Result empty for query: ",
+	     qq, ") Series does not exist on database.")
 
     if  (i == 1) {
        tbl <- q$tbl
@@ -781,7 +783,17 @@ setGeneric("TSexists", valueClass="logicalId",
 
 
 #####################################
-# a little utility
+# this method will generally not be needed by users, but is used in the test
+# database setup. It needs to be generic in order to work around the problem
+# that different db engines treat capitalized table names differently.
+# e.g. MySQL uses table name Meta while Posgresql converts to meta.
+# A default con is not used on purpose.
+
+setGeneric("dropTStable",
+   def= function(con=NULL,Table, yesIknowWhatIamDoing=FALSE)
+    standardGeneric("dropTStable"))
+
+########## a little utility#######
 
 TSfinddb <- function(dbname=NULL, driverOrder=c("MySQL", "SQLite", "padi")) {
   if(is.null(dbname)) stop("dbname must be supplied.")
