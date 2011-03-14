@@ -9,6 +9,15 @@ Known BUGS
    o	There is a warning message about ambiguous slot choice in the integer 
 	coercion of the connection con. (This is a bug in DBI packages.)
 
+Changes in TSdbi version 2011.3-1
+
+   o	added support for TSrepresentation.
+
+Changes in TSdbi version 2010.11-2
+
+   o	Removing trivial dependence on periods() to avoid complications in
+   	sorting out complicting usuage.
+
 Changes in TSdbi version 2010.10-1
 
    o	added generic dropTStable to work around problem that different database
