@@ -14,7 +14,7 @@
 \arguments{
     \item{con}{A database connection.}
     \item{serIDs}{identifiers for series to extract.}
-    \item{...}{Arguments passed to TSgetSQL or other methods.}
+    \item{...}{Arguments passed to TSgetSQL or other methods. See details.}
 }
 \value{A time series matrix.}
 \details{
@@ -31,12 +31,19 @@ The user can specify a default time series representation with the argument
 TSrepresentation="something" where "something" is "default" by default, but 
 might be "zoo" or something else which is used to coerce the representation.
 The \code{TSrepresentation} is passed in the \dots argument. 
-The representation is applied using \code{do.call(TSrepresentation, list(mat))}
-where \code{mat} is the time series (matrix) to be return. 
-If \code{TSrepresentation} is not specified 
-then the \code{ts} representation is used for data from tables 
+The conversion is done with the function \code{changeTSrepresentation}.
+If the representation is a character string then it is applied using \code{do.call(TSrepresentation, list(mat, dates))}
+where \code{mat} is the time series (matrix) to be return and dates are
+determined by \code{as.Date(time(x))} where \code{x} is the default representation of the data. If representation is not a character string 
+then it should be
+a function and is applied using \code{TSrepresentation(mat, dates)}
+
+If \code{TSrepresentation} is not specified, or is specified as "default",
+then for SQL packages (\pkg{TSMySQL}, \pkg{TSPostgreSQL }, \pkg{TSSQLite}, etc)
+the \code{ts} representation is used for data from tables 
 "A", "Q", "M","S" and \code{zoo} otherwise. See \code{\link{TSput}} for a
-list of the various tables. 
+list of the various tables. For other packages the default is zoo in most cases,
+but may vary.
 
 It would be possible to specify \code{TSrepresentation="as.zoo"}, but this may
 result in \code{as.zoo} being applied twice, in which case some information 
@@ -74,6 +81,7 @@ will be used for the series names in the returned time series matrix.
 \code{\link{TSput}},
 \code{\link{TSdates}}
 \code{\link[tframe]{tfwindow}}
+\code{\link[tframePlus]{changeTSrepresentation}}
 }
 \keyword{ts}
 
