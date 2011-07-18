@@ -114,7 +114,8 @@ setMethod("TSdescription",   signature(x="ANY", con="missing"),
 setMethod("TSdescription",   signature(x="character", con="ANY"),
    definition= function(x, con=getOption("TSconnection"), ...) {
        if(is.null(con)) stop("NULL con is not allowed. See ?TSdescription.")
-       else stop("con class ", class(con), " is not supported.")} )
+       else stop("con class ", class(con), 
+       " is not supported. (Check this is a TSdbi connection, not a raw DBI connection.)")} )
 
 #  Next two methods are for case where the user mistakenly specifies
 #     serIDS="whatever"  rather than x="whatever"
@@ -131,40 +132,63 @@ setMethod("TSdescription",   signature(x="missing", con="missing"),
 	else TSdescription(x=serIDs, ...)
 	})
 
-# internal utilities to construct WHERE
+# internal utilities to construct WHERE and table name
 
-realVintage <- function(con, vintage, x) {
+tbNm <- function(hasVintages, tbl, rV) {
+	if(hasVintages) tbl <- paste(tbl, rV, sep="_")
+	# map - to _ in table names
+	gsub("-", "_",tbl)
+	}
+
+realVintage <- function(con, vintage, serIDs) {
    # replace alias with canonical name if necessary
+   # assuming if vintage is a vector then serIDs has already been expanded to
+   # the same length. Otherwise, vintage should be null or a scalar which is
+   # expanded to the length of serIDs. 
    if(!con@hasVintages) return(vintage) #usually NULL in this case 
+   
    if(is.null(vintage)) vintage <- "current"
-   if(1 < length(vintage)) stop("vintage must be a scalar string.")
-   id <- paste(paste("'", x ,"'",sep=""),collapse=",")
-   q <- paste("SELECT vintage  FROM vintageAlias WHERE alias='",
-              vintage,"' AND id IN (",id,");", sep="") 
-   rV <- dbGetQuery(con,q )$vintage
-   # if alias result is empty check null id which applies to all series.
-   if (0== NROW(rV)) {
-      q <- paste(
-        "SELECT vintage  FROM vintageAlias WHERE alias='", vintage,"' ;", sep="")
-      rV <- dbGetQuery(con,q )$vintage
-      }
-   # if alias result is still empty assume vintage is already the real one.
-   if (0== NROW(rV)) rep(vintage, length(x)) else rV
+   else if( 1 == length(vintage)) vintage <- rep(vintage, length(serIDs))
+   
+   rV <- NULL
+   for (i in seq(length(serIDs))){
+     q <- paste("SELECT vintage  FROM vintageAlias WHERE alias ='",
+              vintage[i],"' AND id = '",serIDs[i],"';", sep="") 
+     r <- dbGetQuery(con,q )$vintage
+     # if alias result is empty check null id which applies to all series.
+     if (0== NROW(r)) {
+        q <- paste( "SELECT vintage  FROM vintageAlias WHERE alias='", 
+	            vintage[i],"' ;", sep="")
+        r <- dbGetQuery(con,q )$vintage
+        }
+     # if alias result is still empty assume vintage is already the real one.
+     if (0== NROW(r)) r <- vintage[i]
+     rV <- c(rV, r)
+     }
+   rV
    }
 
 realPanel <- function(con, panel) {
    # replace alias with canonical name if necessary
    if(!con@hasPanels) return(panel) #usually NULL in this case
    if(is.null(panel)) stop("panel must be specified")
-   q <- paste("SELECT panel  FROM panelAlias WHERE alias='",panel,"';", sep="") 
+   for (i in seq(length(panel))){
+     q <- paste("SELECT panel  FROM panelAlias WHERE alias='",
+                panel[i],"';", sep="") 
 
-   rP <- dbGetQuery(con,q )$panel
-   # if alias result is empty assume panel is already the real one.
-   if (0== NROW(rP)) panel else rP
+     r <- dbGetQuery(con,q )$panel
+     # if alias result is empty assume panel is already the real one.
+     if (0== NROW(r)) r <- panel[i]
+     rP <- c(rP, r)
+     }
+   rP
    }
 
-setWhere <- function(con, x, realVintage, realPanel) {
-   where <-  paste(" WHERE id = '", x, "'", sep="")
+setWhere <- function(con, serIDs, realVintage, realPanel) {
+   # serIDs must be a scale for this function
+   # Calls for Meta will pass realVintage, but data tables will set 
+   #  realVintage=NULL and append vintage to table name.
+   where <-  paste(" WHERE id = '", serIDs, "'", sep="")
    if(!is.null(realVintage))
       where <- paste(where, " AND vintage='", realVintage, "'", sep="")
    if(!is.null(realPanel)) 
@@ -208,7 +232,8 @@ setMethod("TSdoc",   signature(x="ANY", con="missing"),
 setMethod("TSdoc",   signature(x="character", con="ANY"),
    definition= function(x, con=getOption("TSconnection"), ...) {
        if(is.null(con)) stop("NULL con is not allowed. See ?TSdoc.")
-       else stop("con class ", class(con), " is not supported.")} )
+       else stop("con class ", class(con), 
+       " is not supported. (Check this is a TSdbi connection, not a raw DBI connection.)")} )
 
 #  Next two methods are for case where the user mistakenly specifies
 #     serIDS="whatever"  rather than x="whatever"
@@ -262,7 +287,8 @@ setMethod("TSlabel",   signature(x="ANY", con="missing"),
 setMethod("TSlabel",   signature(x="character", con="ANY"),
    definition= function(x, con=getOption("TSconnection"), ...) {
        if(is.null(con)) stop("NULL con is not allowed. See ?TSlabel.")
-       else stop("con class ", class(con), " is not supported.")} )
+       else stop("con class ", class(con), 
+       " is not supported. (Check this is a TSdbi connection, not a raw DBI connection.)")} )
 
 #  Next two methods are for case where the user mistakenly specifies
 #     serIDS="whatever"  rather than x="whatever"
@@ -351,7 +377,8 @@ setMethod("TSput",   signature(x="ANY", serIDs="DBIConnection", con="missing"),
 setMethod("TSput",   signature(x="ANY", serIDs="character", con="ANY"),
    definition= function(x, serIDs=seriesNames(x), con=getOption("TSconnection"), ...) {
        if(is.null(con)) stop("NULL con is not allowed. See ?TSput.")
-       else stop("con class ", class(con), " is not supported.")} )
+       else stop("con class ", class(con), 
+       " is not supported. (Check this is a TSdbi connection, not a raw DBI connection.)")} )
 
    
 
@@ -384,24 +411,20 @@ TSputSQL <- function(x, serIDs=seriesNames(x), con, Table=NULL,
     0 == dbGetException(con)$errorNum
     }
 
-  P <- function(v, p, table, columns, id, ...) {
+  P <- function(p, tableV, columns, id, ...) {
     x <- list(...)
     vl <- id
     if(!is.null(p))  {
       vl <- paste(p,vl, sep=",")
       columns <- paste("panel,",columns, sep="")
       }
-    if(!is.null(v))  {
-      vl <- paste(v,vl, sep=",")
-      columns <- paste("vintage,",columns, sep="")
-      }
     for (i in 1:length(x)) vl <- paste(vl, x[[i]], sep="', '")
     # SQL wants NULL (not 'NULL') for NA
     vl <-   gsub("'NA'", "NULL", paste(vl,"'", sep=""))
-    dbGetQuery(con, paste("DELETE FROM  ",table,
-                     setWhere(con,id[1],vintage,panel), ";", sep="")) 
+    dbGetQuery(con, paste("DELETE FROM  ",tableV,
+                     setWhere(con,id[1],NULL,panel), ";", sep="")) 
     for (i in seq(length(vl))){
-      q <- paste("INSERT INTO ",table, " (", columns,
+      q <- paste("INSERT INTO ",tableV, " (", columns,
                      ") VALUES ('", vl[i], ") ", sep="")  
       dbGetQuery(con, q) 
       }
@@ -409,6 +432,12 @@ TSputSQL <- function(x, serIDs=seriesNames(x), con, Table=NULL,
     if(is(con, "SQLiteConnection")) return(TRUE)
     0 == dbGetException(con)$errorNum
     }
+
+  if (con@hasVintages) {
+     hV <- TRUE
+     vintage <- realVintage(con,vintage, serIDs)
+     }
+  else hV <- FALSE 
 
   # as.matrix(x) clobbers seriesNames(x)
   ids <-  serIDs 
@@ -424,19 +453,19 @@ TSputSQL <- function(x, serIDs=seriesNames(x), con, Table=NULL,
     x <- as.matrix(x)
     if(1==fr)   for (i in seq(nseries(x))) {  
 	okM <-  M(vintage, panel, "A",  ids[i], rP[i], TSdescription.[i], TSdoc.[i])
-        ok <- P(vintage, panel, "A", "id, year, v", ids[i], y, x[,i])
+        ok <- P(panel, tbNm(hV, "A", vintage), "id, year, v", ids[i], y, x[,i])
         }
     else if(2==fr)   for (i in seq(nseries(x))) {  
 	okM <-  M(vintage, panel, "S",  ids[i], rP[i], TSdescription.[i], TSdoc.[i])
-        ok <- P(vintage, panel, "S", "id, year, period, v", ids[i], y, p, x[,i])
+        ok <- P(panel, tbNm(hV, "S", vintage), "id, year, period, v", ids[i], y, p, x[,i])
         }
     else if(4==fr)   for (i in seq(nseries(x))) {  
 	okM <-  M(vintage, panel, "Q",  ids[i], rP[i], TSdescription.[i], TSdoc.[i])
-        ok <- P(vintage, panel, "Q", "id, year, period, v", ids[i], y, p, x[,i])
+        ok <- P(panel, tbNm(hV, "Q", vintage), "id, year, period, v", ids[i], y, p, x[,i])
         }
     else if(12==fr)   for (i in seq(nseries(x))) {  
 	okM <-  M(vintage, panel, "M",  ids[i], rP[i], TSdescription.[i], TSdoc.[i])
-        ok <- P(vintage, panel, "M", "id, year, period, v", ids[i], y, p, x[,i])
+        ok <- P(panel, tbNm(hV, "M", vintage), "id, year, period, v", ids[i], y, p, x[,i])
         }
     else stop("ts frequency not supported.")  
     }
@@ -451,31 +480,31 @@ TSputSQL <- function(x, serIDs=seriesNames(x), con, Table=NULL,
     if("W" == Table)   for (i in seq(nseries(x))) {  
 	okM <-  M(vintage, panel, "W",  ids[i], rP[i], TSdescription.[i], TSdoc.[i])
         # period should be week of the year 1-52/3
-	ok <- P(vintage, panel, "W", "id, date, period, v", ids[i], d, p$mday, x[,i])
+	ok <- P(panel, tbNm(hV, "W", vintage), "id, date, period, v", ids[i], d, p$mday, x[,i])
         }
     else if("B" == Table)   for (i in seq(nseries(x))) {  
 	okM <-  M(vintage, panel, "B",  ids[i], rP[i], TSdescription.[i], TSdoc.[i])
         # period should be business day of the year 1- ~260
 	#  but need to map holidays
-        ok <- P(vintage, panel, "B", "id, date, period, v", ids[i], d, p$yday, x[,i])
+        ok <- P(panel, tbNm(hV, "B", vintage), "id, date, period, v", ids[i], d, p$yday, x[,i])
         }
     else if("D" == Table)   for (i in seq(nseries(x))) {  
 	okM <-  M(vintage, panel, "D",  ids[i], rP[i], TSdescription.[i], TSdoc.[i])
         # period should be day of the year 1- 365/6
-        ok <- P(vintage, panel, "D", "id, date, period, v", ids[i], d, p$yday, x[,i])
+        ok <- P(panel, tbNm(hV, "D", vintage), "id, date, period, v", ids[i], d, p$yday, x[,i])
         }
     else if("U" == Table)   for (i in seq(nseries(x))) {  
 	okM <-  M(vintage, panel, "U",  ids[i], rP[i], TSdescription.[i], TSdoc.[i])
         tz <- attr(p, "tzone")
-	ok <- P(vintage, panel, "U", "id, date, period, v", ids[i], d, tz, p$mday,x[,i])
+	ok <- P(panel, tbNm(hV, "U", vintage), "id, date, period, v", ids[i], d, tz, p$mday,x[,i])
         }
     else if("T" == Table)   for (i in seq(nseries(x))) {  
 	okM <-  M(vintage, panel, "T",  ids[i], rP[i], TSdescription.[i], TSdoc.[i])
-        ok <- P(vintage, panel, "T", "id, date, v", ids[i], d, x[,i])
+        ok <- P(panel, tbNm(hV, "T", vintage), "id, date, v", ids[i], d, x[,i])
         }
     else if("I" == Table)   for (i in seq(nseries(x))) {  
 	okM <-  M(vintage, panel, "I",  ids[i], rP[i], TSdescription.[i], TSdoc.[i])
-        ok <- P(vintage, panel, "I", "id, date, v", ids[i], d, x[,i])
+        ok <- P(panel, tbNm(hV, "I", vintage), "id, date, v", ids[i], d, x[,i])
         }
     else stop("Table specification not supported.")  
      }
@@ -521,18 +550,21 @@ setMethod("TSdelete",
    definition= function(serIDs, con=getOption("TSconnection"),
         vintage=getOption("TSvintage"), panel=getOption("TSpanel"), ...) {
        if(is.null(con)) stop("NULL con is not allowed. See ?TSdelete.")
-       else stop("con class ", class(con), " is not supported.")} )
+       else stop("con class ", class(con), 
+       " is not supported. (Check this is a TSdbi connection, not a raw DBI connection.)")} )
 
    
 TSdeleteSQL <- function(serIDs, con=getOption("TSconnection"),  
    vintage=getOption("TSvintage"), panel=getOption("TSpanel")) {
      for (i in seq(length(serIDs))) {
-     	where <-  setWhere(con, serIDs[i],  
-		        realVintage(con, vintage, i),
-		        realPanel(con,panel))
+     	rv <- realVintage(con, vintage, i)
+	rp <- realPanel(con,panel)
+	where  <-  setWhere(con, serIDs[i], rv,   rp)
+     	whereT <-  setWhere(con, serIDs[i], NULL, rp)
      	q <- dbGetQuery(con, paste("SELECT tbl  FROM Meta ",where, ";"))
-     	 if(0 != length(q)) {
-     	   dbGetQuery(con, paste("DELETE FROM ", q$tbl, where, ";")) 
+	tbl <- tbNm(con@hasVintages, q$tbl, rv)
+	if(0 != length(q)) {
+     	   dbGetQuery(con, paste("DELETE FROM ", tbl, whereT, ";")) 
      	   dbGetQuery(con, paste("DELETE FROM Meta ",	where, ";")) 
      	   }
      	 }
@@ -558,7 +590,8 @@ setMethod("TSget",   signature(serIDs="character", con="missing"),
 setMethod("TSget",   signature(serIDs="character", con="ANY"),
    definition= function(serIDs, con=getOption("TSconnection"), ...){
        if(is.null(con)) stop("NULL con is not allowed. See ?TSget.")
-       else stop("con class ", class(con), " is not supported.")} )
+       else stop("con class ", class(con), 
+       " is not supported. (Check this is a TSdbi connection, not a raw DBI connection.)")} )
 
 # next is called by methods for various SQL dbs.
 TSgetSQL <- function(serIDs, con, TSrepresentation=getOption("TSrepresentation"),
@@ -576,8 +609,14 @@ TSgetSQL <- function(serIDs, con, TSrepresentation=getOption("TSrepresentation")
          if ( length(vintage) > 1 ) vintage  else  serIDs 
 
   panel <- realPanel(con,panel)
+  # if vintage is a vector then serIDs needs to be expanded
+  if ( 1 < length(vintage)) serIDs <- rep(serIDs, length(vintage))
   # next returns a vector of length equal serIDs
-  vintage <- realVintage(con,vintage, serIDs) 
+  if (con@hasVintages) {
+     hV <- TRUE
+     vintage <- realVintage(con,vintage, serIDs)
+     }
+  else hV <- FALSE 
 
   Q <- function(q) {# local function
       res <- dbGetQuery(con, q)
@@ -588,7 +627,8 @@ TSgetSQL <- function(serIDs, con, TSrepresentation=getOption("TSrepresentation")
   mat <- desc <- doc <- label <- rp <- NULL
   # if series are in "A", "Q", "M","S" use  ts otherwise zoo.
   for (i in seq(length(serIDs))) {
-    where <-  setWhere(con, serIDs[i], vintage[i], panel)
+    where  <-  setWhere(con, serIDs[i], vintage[i], panel)
+    whereT <-  setWhere(con, serIDs[i], NULL,       panel)
     for (j in seq(length(where))) {
     qq <- paste("SELECT tbl, refperiod  FROM Meta ",where[j], ";")
     q <- dbGetQuery(con, qq)
@@ -608,51 +648,61 @@ TSgetSQL <- function(serIDs, con, TSrepresentation=getOption("TSrepresentation")
     rp <- c(rp, q$refperiod)
 
     if (tbl=="A") 
-      {res <- Q(paste("SELECT year, v FROM A ",where[j], " order by year;"))
+      {res <- Q(paste("SELECT year, v FROM ", tbNm(hV, "A", vintage[i]), 
+                whereT[j], " order by year;"))
        r   <- ts(res[,2], start=c(res[1,1], 1), frequency=1) 
        if(useZoo) r <- as.zoo(r)
      }
     else if (tbl=="Q")  
-      {res <- Q(paste("SELECT year, period, v FROM Q ",where[j], " order by year, period;"))
+      {res <- Q(paste("SELECT year, period, v FROM ", tbNm(hV, "Q", vintage[i]),
+                whereT[j], " order by year, period;"))
        r   <- ts(res[,3], start=c(res[1,1:2]), frequency=4) 	 
        if(useZoo) r <- as.zoo(r)
       }
     else if (tbl=="M")
-      {res <- Q(paste("SELECT year, period, v FROM M ",where[j], " order by year, period;"))
+      {res <- Q(paste("SELECT year, period, v FROM ", tbNm(hV, "M", vintage[i]),
+                whereT[j], " order by year, period;"))
        r   <- ts(res[,3], start=c(res[1,1:2]), frequency=12)	 
        if(useZoo) r <- as.zoo(r)
       }
     else if (tbl=="W") 
-      {res <- Q(paste("SELECT date, period, v FROM W ",where[j], " order by date;"))
+      {res <- Q(paste("SELECT date, period, v FROM ", tbNm(hV, "W", vintage[i]),
+                whereT[j], " order by date;"))
        r   <- zoo(as.numeric(res[,3]), as.Date(res[,1]))
        # period is as.int(res[,2]) 	 
       }
     else if (tbl=="B") 
-      {res <- Q(paste("SELECT date, period, v FROM B ",where[j], " order by date;"))
+      {res <- Q(paste("SELECT date, period, v FROM ", tbNm(hV, "B", vintage[i]),
+                whereT[j], " order by date;"))
        r   <- zoo(as.numeric(res[,3]), as.Date(res[,1]))
        # period is as.int(res[,2]) 	 
       }
     else if (tbl=="D")  
-      {res <- Q(paste("SELECT date, period, v FROM D ",where[j], " order by date;"))
+      {res <- Q(paste("SELECT date, period, v FROM ", tbNm(hV, "D", vintage[i]),
+                whereT[j], " order by date;"))
        r   <- zoo(as.numeric(res[,3]), as.Date(res[,1]))
        # period is as.int(res[,2]) 	 
       }
     else if (tbl=="S")    
-      {res <- Q(paste("SELECT year, period, v FROM S ",where[j], " order by year, period;"))
+      {res <- Q(paste("SELECT year, period, v FROM ", tbNm(hV, "S", vintage[i]),
+                whereT[j], " order by year, period;"))
        r   <- ts(res[,3], start=c(res[1,1:2]), frequency=2)	 
        if(useZoo) r <- as.zoo(r)
       }
     else if (tbl=="U")  
-      {res <- Q(paste("SELECT date, tz, period, v FROM U ",where[j], " order by date;"))
+      {res <- Q(paste("SELECT date, tz, period, v FROM U ",tbNm(hV,"U",vintage[i]),
+                whereT[j], " order by date;"))
        r   <- zoo(as.numeric(res[,4]), as.Date(res[,1]))
        # tz ? period is as.int(res[,3]) 	 
       }
     else if (tbl=="I")  
-      {res <- Q(paste("SELECT date, v FROM I ",where[j], " order by date;"))
+      {res <- Q(paste("SELECT date, v FROM ", tbNm(hV, "I", vintage[i]), 
+                whereT[j], " order by date;"))
        r   <- zoo(as.numeric(res[,2]), as.Date(res[,1]))
       }
     else if (tbl=="T")  
-      {res <- Q(paste("SELECT date, v FROM T ",where[j], " order by date;"))
+      {res <- Q(paste("SELECT date, v FROM ", tbNm(hV, "T", vintage[i]), 
+                whereT[j], " order by date;"))
        r   <- zoo(as.numeric(res[,2]), as.POSIXct(res[,1]))
       }
     else stop("Specified table not found.", 
@@ -705,7 +755,8 @@ setMethod("TSdates",
    definition= function(serIDs, con=getOption("TSconnection"), 
            vintage=getOption("TSvintage"), panel=getOption("TSpanel"), ...) {
        if(is.null(con)) stop("NULL con is not allowed. See ?TSdates.")
-       else stop("con class ", class(con), " is not supported.")} )
+       else stop("con class ", class(con), 
+       " is not supported. (Check this is a TSdbi connection, not a raw DBI connection.)")} )
 
 TSdatesSQL <- function(serIDs, con,  
        vintage=getOption("TSvintage"), panel=getOption("TSpanel")) {

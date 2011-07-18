@@ -50,6 +50,7 @@ cat("**************        with ts\n")
  
  TSdelete("mat2c1", con)
  TSdelete("mat2c2")
+ cat("**************   done with ts\n")
 
 if (require("zoo") ) {
  cat("**************        with zoo\n")
@@ -70,10 +71,13 @@ if (require("zoo") ) {
 # zoo bug  tfplot(z, TSget(c("zooWc1","zooWc2"), con), col=c("black", "red"),
 # lty=c("dashed", "solid"))  
  if(1e-8 < max(abs(c(z) - c(TSget(c("zooWc1","zooWc2"), con))))) stop("zooW  error.")
+ cat("**************   done with zoo\n")
  }
  
-conets <- try(TSconnect(m, dbname="ets")) 
-if(! inherits(conets, "try-error")) {
+conets <- try(TSconnect(m, dbname="ets"), silent =TRUE) 
+if(inherits(conets, "try-error")) {
+  cat("**************        skipping ets tests\n")
+  } else {
 
   cat("**************        with ets\n")
   options(TSconnection=conets)
