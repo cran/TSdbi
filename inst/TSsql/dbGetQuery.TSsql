@@ -19,9 +19,11 @@ cat("**************  Examples Using dbGetQuery\n")
 # check if schema query is supported.
 z <- try(dbGetQuery(con, paste(
        "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.Columns ",
-       " WHERE TABLE_SCHEMA='test' AND table_name='A' ;")))
+       " WHERE TABLE_SCHEMA='test' AND table_name='A' ;")), silent = TRUE)
 
-if (inherits(z, "try-error") ) warning("skipping TABLE_SCHEMA queries")  else {
+if(inherits(z, "try-error")) {
+  cat("**************  skipping TABLE_SCHEMA queries\n")
+  } else {
 
 #  This is generic sql way to get table info.
 print(dbGetQuery(con, paste(
@@ -38,9 +40,10 @@ print(dbGetQuery(con, paste(
 #  dbGetQuery(con, "SELECT 'rows in M ', COUNT(id) FROM M ;")
 #  dbGetQuery(con, "SELECT 'series in M ', COUNT(DISTINCT(id)) FROM M ;")
 
-conets <- try(TSconnect(m, dbname="ets")) 
-if(! inherits(conets, "try-error")) {
-
+conets <- try(TSconnect(m, dbname="ets"), silent =TRUE) 
+if(inherits(conets, "try-error")) {
+  cat("**************  skipping dbGetQuery with ets\n")
+  } else {
   cat("**************        dbGetQuery with ets\n")
 
   print(dbGetQuery(conets, "SELECT description FROM Meta WHERE id = 'B103';"))
