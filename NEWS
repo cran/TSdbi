@@ -9,6 +9,11 @@ Known BUGS
    o	There is a warning message about ambiguous slot choice in the integer 
 	coercion of the connection con. (This is a bug in DBI packages.)
 
+Changes in TSdbi version 2011.8-1
+
+   o	added TSvintages generic and methods to extract all vintage ids 
+   	from a database.
+
 Changes in TSdbi version 2011.7-1
 
    o	modified several methods signatures to expect a TSdbi connection and not attempt

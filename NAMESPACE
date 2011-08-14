@@ -44,7 +44,8 @@ export(
    "TSmeta",
    "TSmeta<-",
    "TSrefperiod",
-   "TSrefperiod<-" 
+   "TSrefperiod<-",
+   "TSvintages"
    )
 
 ## S4 methods
@@ -60,6 +61,7 @@ exportMethods(
    "TSdates",
    "TSdescription",
    "TSdoc",
+   "TSvintages",
    "dropTStable"
    )
 

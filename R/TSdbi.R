@@ -846,7 +846,7 @@ setGeneric("dropTStable",
    def= function(con=NULL,Table, yesIknowWhatIamDoing=FALSE)
     standardGeneric("dropTStable"))
 
-########## a little utility#######
+########## little utilities #######
 
 TSfinddb <- function(dbname=NULL, driverOrder=c("MySQL", "SQLite", "padi")) {
   if(is.null(dbname)) stop("dbname must be supplied.")
@@ -866,3 +866,35 @@ TSfinddb <- function(dbname=NULL, driverOrder=c("MySQL", "SQLite", "padi")) {
       }
   else return(con)
   }
+
+
+# return all vintage ids
+
+setGeneric("TSvintages", 
+   def=function(con=getOption("TSconnection")) standardGeneric("TSvintages"))
+
+# setting the default this way would mean the method does not need to be
+# defined in SQL packages, but requires other packages to define a method,
+# otherwise they fail with a non-intuitive message.
+#setGeneric("TSvintages", 
+#   def=function(con=getOption("TSconnection")) standardGeneric("TSvintages"),
+#   useAsDefault= function(con) {
+#   if(is.null(con)) stop("NULL con is not allowed. See ?vintages.")
+#   if(!con@hasVintages) return(NULL)   
+#   dbGetQuery(con,"SELECT  DISTINCT(vintage) FROM  vintages;" )$vintage
+#  } )
+
+setMethod("TSvintages",
+   signature(con="missing"),
+   definition= function(con=getOption("TSconnection")){ 
+       if(is.null(con)) 
+          stop("con should be specified or set with options(TSconnection=con). See ?TSvintages.") 
+       TSvintages(con=con)} )
+
+#  next is for case where there is no method for con  
+setMethod("TSvintages",
+   signature(con="ANY"),
+   definition= function(con=getOption("TSconnection")) {
+       if(is.null(con)) stop("NULL con is not allowed. See ?TSvintages.")
+       else stop("con class ", class(con), 
+       " is not supported. (Check this is a TSdbi connection, not a raw DBI connection.)")} )

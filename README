@@ -1,18 +1,11 @@
-(This is an beta version.)
-
 TSdbi attempts to provide a common R interface (API) to time series databases. 
 It also helps provide some backend implementations of SQL tables, etc., and an 
-interface to Fame . The currently available versions of backends
-include MySQL, SQLite, and Fame through the padi interface. 
+interface to Fame and some other sources of time series data. 
 
 It should be fairly simple to implement any SQL database having a DBI package
-plug (e.g. ROracle and Rpostgresql when that is available). I believe it should 
-be possible to implement with RODBC, but have not tried that yet, and
-it should be possible to implement with the R fame package directly. (If anyone 
-is interested in working on any of these, please contact me for additional 
-hints.)
+plug (e.g. ROracle). 
 
-The current implementation supports annual, quarterly, monthly, semiannual, 
+The current SQL implementation supports annual, quarterly, monthly, semiannual, 
 weekly, daily, business day, minutely, irregular data with a date, and irregular 
 data with a date and time. This may be constrained by the backend (e.g. Fame
 does not support all these types.)  My own work tends to be with the first
@@ -24,16 +17,16 @@ Series documentation is supported in a meta table. (Multilingual support is not
 yet implemented, but should not be too difficult.)
 
 The design also (optionally) supports vintages and panels of data (e.g.
-series with the same identifier but a different release date or country). This
-feature is actively under developement.
+series with the same identifier but a different release date or country). The
+vintage feature is fairly well tested, but panels have had less attention.
 
-The intention is that the R time series representation can optionally be
-specified, but currently only the default is working (ts were possible and zoo
-elsewhere).
+The R time series representation can optionally be
+specified. The default is ts were possible and zoo
+elsewhere.
 
 The TSdbi package provides the common parts of the interface. To use this 
 package it is necessary to also have one of the database specific packages, such
-as  TSMySQL, TSSQLite, or TSpadi. More extensive vignette examples are provided 
+as  TSMySQL, TSSQLite, or TSfame. More extensive vignette examples are provided 
 in each of those packages. (The vignettes are very similar, but they will not 
 build properly without one of the database specific packages.)
 
