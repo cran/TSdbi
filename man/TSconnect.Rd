@@ -6,6 +6,7 @@
 \alias{TSid-class}
 \alias{show,logicalId-method}
 \alias{show,TSdb-method}
+\alias{show,TSmeta-method}
 \alias{print,TSdb-method}
 
 \title{Connect to a Time Series Database}
@@ -15,6 +16,7 @@
     \S4method{TSconnect}{character,character}(drv, dbname, ...)
     \S4method{show}{logicalId}(object)
     \S4method{show}{TSdb}(object)
+    \S4method{show}{TSmeta}(object)
     \S4method{print}{TSdb}(x, ...)
 }
 \arguments{

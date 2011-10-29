@@ -41,6 +41,8 @@ export(
    "TSdoc<-",
    "TSlabel",
    "TSlabel<-",
+   "TSsource",
+   "TSsource<-",
    "TSmeta",
    "TSmeta<-",
    "TSrefperiod",
@@ -50,6 +52,7 @@ export(
 
 ## S4 methods
 exportMethods(
+   "show",
    ##"print",
    ## "dbConnect", # generic from DBI
    "TSconnect",

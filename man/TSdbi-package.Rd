@@ -19,7 +19,7 @@ Depends: \tab R (>= 2.5.0), methods, tframe (>= 2008.5-1)\cr
 Imports: \tab methods, DBI\cr
 Suggests:\tab zoo, tseries\cr
 License: \tab GPL Version 2.\cr
-URL: \tab http://www.bank-banque-canada.ca/pgilbert\cr
+URL: \tab http://tsdbi.r-forge.r-project.org\cr
 }
 
 The main functions are:
@@ -46,8 +46,8 @@ Options can be set to simplify access to a commonly used database
 }
 
 \author{
-Paul Gilbert <pgilbert@bank-banque-canada.ca> 
-Maintainer: Paul Gilbert <pgilbert@bank-banque-canada.ca>  
+Paul Gilbert <pgilbert.ttv9z@ncf.ca>
+Maintainer: Paul Gilbert <pgilbert.ttv9z@ncf.ca>  
 }
 \keyword{ package }
 \keyword{ ts }

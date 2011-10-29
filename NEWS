@@ -9,6 +9,16 @@ Known BUGS
    o	There is a warning message about ambiguous slot choice in the integer 
 	coercion of the connection con. (This is a bug in DBI packages.)
 
+Changes in TSdbi version 2011.11-1
+
+   o	updated maintainer email address.
+
+   o	added show method for TSmeta object. 
+
+   o	added structure for support of TSsource metadata field. 
+
+   o	added check for lowercase table names in CreateTables.TSsql setup. 
+
 Changes in TSdbi version 2011.8-1
 
    o	added TSvintages generic and methods to extract all vintage ids 
