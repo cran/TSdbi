@@ -18,6 +18,7 @@
 Strings indicating the  information.
 }
 \seealso{
+\code{\link{TSsource}}, 
 \code{\link{TSget}}, 
 \code{\link{TSconnect}}, 
 \code{\link{TSdates}}

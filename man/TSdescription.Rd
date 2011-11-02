@@ -23,6 +23,14 @@
 \alias{TSlabel,missing,missing-method}
 \alias{TSlabel<-}
 
+\alias{TSsource}
+\alias{TSsource,character,missing-method}
+\alias{TSsource,character,ANY-method}
+\alias{TSsource,ANY,missing-method}
+\alias{TSsource,missing,ANY-method}
+\alias{TSsource,missing,missing-method}
+\alias{TSsource<-}
+
 \alias{TSmeta-class}
 \alias{TSmeta}
 \alias{TSmeta,character,missing-method}
@@ -78,6 +86,14 @@
     \S4method{TSlabel}{missing,missing}(x, serIDs, ...)
     TSlabel(x) <- value
 
+    TSsource(x, con=getOption("TSconnection"), ...) 
+    \S4method{TSsource}{character,missing}(x, con=getOption("TSconnection"), ...)
+    \S4method{TSsource}{character,ANY}(x, con=getOption("TSconnection"), ...)
+    \S4method{TSsource}{ANY,missing}(x, con, ...)
+    \S4method{TSsource}{missing,ANY}(x, con, serIDs, ...)
+    \S4method{TSsource}{missing,missing}(x, serIDs, ...)
+    TSsource(x) <- value
+
     TSrefperiod(x)
     \S4method{TSrefperiod}{default}(x)
     TSrefperiod(x) <- value
@@ -96,7 +112,7 @@
 \value{Depends. See details.}
 \details{
 These functions return various information about the data series. Methods
-with \code{con} and \code{serIDs} (sometimes identifier are passed as
+with \code{con} and \code{serIDs} (sometimes identifiers are passed as
 argument \code{x}) get data from the database. Others extract
 information from the object.
 

@@ -3,9 +3,16 @@
 
 cat("Example creating tables for different time series.\n")
 
+# Note: The TS* packages contain a method "dropTStable" to work around the
+#  problem that different db engines treat capitalized table names differently.
+# e.g. MySQL uses table name Meta while Posgresql converts to meta.
+# However, these examples are need to work when that method is not available
+# so some duplication is used here to remove existing tables. 
+
 # Set up Metadata table  Meta.
 
 if(dbExistsTable(con, "Meta")) dbRemoveTable(con, "Meta")
+if(dbExistsTable(con, "meta")) dbRemoveTable(con, "meta")
 
 dbGetQuery(con, "create table Meta (
    id          VARCHAR(40) NOT NULL,
@@ -20,6 +27,7 @@ dbGetQuery(con, "CREATE INDEX Metaindex_tbl ON Meta (tbl);")
 # Set up annual table  A.
 
 if(dbExistsTable(con, "A")) dbRemoveTable(con, "A")
+if(dbExistsTable(con, "a")) dbRemoveTable(con, "a")
 
 dbGetQuery(con, "create table A (
    id	      VARCHAR(40),
@@ -32,6 +40,7 @@ dbGetQuery(con, "CREATE INDEX Aindex_year   ON A (year);")
 # Set up business table  B .
 
 if(dbExistsTable(con, "B")) dbRemoveTable(con, "B")
+if(dbExistsTable(con, "b")) dbRemoveTable(con, "b")
 
 dbGetQuery(con, "create table B (
    id	      VARCHAR(40),
@@ -47,6 +56,7 @@ dbGetQuery(con, "CREATE INDEX Bindex_period ON B (period);")
 # Set up daily table  D .
 
 if(dbExistsTable(con, "D")) dbRemoveTable(con, "D")
+if(dbExistsTable(con, "d")) dbRemoveTable(con, "d")
 
 dbGetQuery(con, "create table D (
    id	      VARCHAR(40),
@@ -62,6 +72,7 @@ dbGetQuery(con, "CREATE INDEX Dindex_period ON D (period);")
 # Set up monthly table  M.
 
 if(dbExistsTable(con, "M")) dbRemoveTable(con, "M")
+if(dbExistsTable(con, "m")) dbRemoveTable(con, "m")
 
 dbGetQuery(con, "create table M (
    id	      VARCHAR(40),
@@ -76,6 +87,7 @@ dbGetQuery(con, "CREATE INDEX Mindex_period ON M (period);")
 # Set up minutely table  U .
 
 if(dbExistsTable(con, "U")) dbRemoveTable(con, "U")
+if(dbExistsTable(con, "u")) dbRemoveTable(con, "u")
 
  # tz not tested yet. Not sure about period.  
  dbGetQuery(con, "create table U (
@@ -93,6 +105,7 @@ dbGetQuery(con, "CREATE INDEX Uindex_period ON U (period);")
 # Set up quaterly table  Q.
 
 if(dbExistsTable(con, "Q")) dbRemoveTable(con, "Q")
+if(dbExistsTable(con, "q")) dbRemoveTable(con, "q")
 
 dbGetQuery(con, "create table Q (
    id	      VARCHAR(40),
@@ -107,6 +120,7 @@ dbGetQuery(con, "CREATE INDEX Qindex_period ON Q (period);")
 # Set up semiannual table  S .
 
 if(dbExistsTable(con, "S")) dbRemoveTable(con, "S")
+if(dbExistsTable(con, "s")) dbRemoveTable(con, "s")
  
 dbGetQuery(con, "create table S (
    id	      VARCHAR(40),
@@ -121,6 +135,7 @@ dbGetQuery(con, "CREATE INDEX Sindex_period ON S (period);")
 # Set up weekly table  W .
 
 if(dbExistsTable(con, "W")) dbRemoveTable(con, "W")
+if(dbExistsTable(con, "w")) dbRemoveTable(con, "w")
 
 dbGetQuery(con, "create table W (
    id	      VARCHAR(40),
@@ -135,6 +150,7 @@ dbGetQuery(con, "CREATE INDEX Windex_period ON W (period);")
 # Set up irregular date table  I .
 
 if(dbExistsTable(con, "I")) dbRemoveTable(con, "I")
+if(dbExistsTable(con, "i")) dbRemoveTable(con, "i")
 
 dbGetQuery(con, "create table I (
    id	      VARCHAR(40),
@@ -150,6 +166,7 @@ dbGetQuery(con, "CREATE INDEX Iindex_date   ON I (date);")
 # IT WOULD BE NICE TO HAVE TZ HERE TOO
 
 if(dbExistsTable(con, "T")) dbRemoveTable(con, "T")
+if(dbExistsTable(con, "t")) dbRemoveTable(con, "t")
 
 dbGetQuery(con, "create table T (
    id    VARCHAR(40),

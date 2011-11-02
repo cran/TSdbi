@@ -5,6 +5,7 @@
 \alias{TSdescriptionSQL}
 \alias{TSdocSQL}
 \alias{TSlabelSQL}
+\alias{TSsourceSQL}
 \alias{TSdeleteSQL}
 
 
@@ -12,8 +13,8 @@
 \description{Standard SQL database queries}
 \usage{
     TSgetSQL(serIDs, con, TSrepresentation=getOption("TSrepresentation"),
-       tf = NULL, start = tfstart(tf), end = tfend(tf), 
-       names=NULL, TSdescription=FALSE, TSdoc=FALSE,  TSlabel=FALSE,
+       tf = NULL, start = tfstart(tf), end = tfend(tf), names=NULL, 
+       TSdescription=FALSE, TSdoc=FALSE, TSlabel=FALSE, TSsource=TRUE,
        vintage=getOption("TSvintage"), panel=getOption("TSpanel"))
 
     TSdatesSQL(serIDs, con, 
@@ -29,9 +30,13 @@
     TSlabelSQL(x=NULL, con=getOption("TSconnection"), 
        vintage=getOption("TSvintage"), panel=getOption("TSpanel"),
        lang=getOption("TSlang"))
+    TSsourceSQL(x=NULL, con=getOption("TSconnection"), 
+       vintage=getOption("TSvintage"), panel=getOption("TSpanel"),
+       lang=getOption("TSlang"))
 
     TSputSQL(x, serIDs=seriesNames(x), con,  Table=NULL,
-       TSdescription.=TSdescription(x), TSdoc.=TSdoc(x),  TSlabel.=TSlabel(x), 
+       TSdescription.=TSdescription(x), 
+         TSdoc.=TSdoc(x), TSlabel.=TSlabel(x), TSsource.=TSsource(x), 
        vintage=getOption("TSvintage"), panel=getOption("TSpanel"))
 }
 \arguments{
@@ -49,6 +54,12 @@
     \item{TSdoc}{TRUE or FALSE indicating whether documentation 
        should be extracted.}
     \item{TSdoc.}{Documentation to put on the database.}
+    \item{TSlabel}{TRUE or FALSE indicating whether documentation 
+       should be extracted.}
+    \item{TSlabel.}{Documentation to put on the database.}
+    \item{TSsource}{TRUE or FALSE indicating whether source indication 
+       should be extracted.}
+    \item{TSsource.}{Source indication to put on the database.}
     \item{Table}{Database table indication (necessary if it cannot be
          determined automatically).}
     \item{vintage}{Vintage to be supplied (if supported by db).}
