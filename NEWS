@@ -9,6 +9,10 @@ Known BUGS
    o	There is a warning message about ambiguous slot choice in the integer 
 	coercion of the connection con. (This is a bug in DBI packages.)
 
+Changes in TSdbi version 2012.03-1
+
+   o	additional cleanup after testing.
+
 Changes in TSdbi version 2011.11-2
 
    o	fixed TSmeta warning in case when TSdoc, TSlabel, or TSdescription 
