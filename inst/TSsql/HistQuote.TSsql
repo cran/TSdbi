@@ -4,6 +4,8 @@
 
 cat("**************        with get.hist.quote\n")
 
+if(!require("tfplot")) stop("These examples require package tfplot.")
+
 if(require("tseries") &&  !inherits(
       try(open(url("http://quote.yahoo.com")), silent = TRUE), "try-error")) {
    # Business

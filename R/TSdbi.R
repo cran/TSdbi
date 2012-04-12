@@ -885,7 +885,7 @@ tfend.TSdates <- function(x) attr(x, "end")
 
 print.TSdates   <- function(x, ...) {
    r <- NULL
-   av <-  attr(x, "TSdates")
+   av <-  attr(x, "TSdates")    # a logical indicator of availability
    st <-  attr(x, "start")
    en <-  attr(x, "end")  
    fr <-  attr(x, "frequency")  # used by TSpadi and possibly elsewhere
@@ -901,16 +901,40 @@ print.TSdates   <- function(x, ...) {
       }
    print(as.matrix(r), ...)
    }
-   
+     
 
 setGeneric("TSexists", valueClass="logicalId",
  def= function(serIDs, con=getOption("TSconnection"), 
            vintage=getOption("TSvintage"), panel=getOption("TSpanel"), ...)
  	    standardGeneric("TSexists"),
- useAsDefault= function(serIDs, con=getOption("TSconnection"), 
+ useAsDefault=function(serIDs, con=getOption("TSconnection"), 
            vintage=getOption("TSvintage"), panel=getOption("TSpanel"), ...){
-    new("logicalId", ! any(is.na(attr(
-       TSdates(serIDs, con, vintage=vintage, panel=panel, ...), "tbl"))), 
+    #vintages treated as a synonym for vintage.
+    #This is done below using TSdates, so the handling of SQL (or not) is looked
+    # after in TSdates. It could be made into a direct query like:
+    #    vintage %in% .. SELECT vintage FROM Meta where id = "V122707";
+    # but that would require a method in each package as for TSdates.
+    
+    # catch a possible common mistake
+    if("vintages" %in% names(list(...)))
+       stop("TSexists argument is 'vintage' not 'vintages'.")
+    
+    if(is.null(vintage)) {
+      z <-  try(TSdates(serIDs,
+               con, vintage=NULL, panel=panel, ...), silent=TRUE)
+      av <- if( inherits(z, "try-error")) FALSE else all(attr(z, "TSdates"))
+      }
+    else {
+      av <- NULL
+      for (i in 1:length(vintage)) {
+         z <- try(TSdates(serIDs, 
+	       con, vintage=vintage[i], panel=panel, ...), silent=TRUE)
+         av <- c(av, 
+	    if( inherits(z, "try-error")) FALSE else all(attr(z, "TSdates")))
+         }
+      }
+
+    new("logicalId", av, 
        TSid=new("TSid", serIDs=serIDs, dbname=con@dbname, 
               conType=class(con), hasVintages=con@hasVintages, hasPanels=con@hasPanels,
 	      DateStamp=NA))})

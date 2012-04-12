@@ -9,13 +9,24 @@ Known BUGS
    o	There is a warning message about ambiguous slot choice in the integer 
 	coercion of the connection con. (This is a bug in DBI packages.)
 
-Changes in TSdbi version 2012.03-1
+Changes in TSdbi version 2012.4-1
 
-   o	additional cleanup after testing.
+   o	Added tfplot to Suggests in DESCRIPTION.
+
+   o	Changed TSexists() to return a logical vector in the case when
+   	vintage is a vector.
+
+   o	Fixed TSexists() to use logical indicator of availability from 
+   	TSdates(), rather than tbl, which was only good for SQL versions.
+
+Changes in TSdbi version 2012.3-1
+
+   o	Additional cleanup after testing.
+
 
 Changes in TSdbi version 2011.11-2
 
-   o	fixed TSmeta warning in case when TSdoc, TSlabel, or TSdescription 
+   o	Fixed TSmeta warning in case when TSdoc, TSlabel, or TSdescription 
    	are vectors.
 
 

@@ -1,5 +1,6 @@
 
 cat("*************  Examples  Using TSdbi*************\n")
+if(!require("tfplot")) stop("These examples require package tfplot.")
 
 cat("**************        with ts\n")
 

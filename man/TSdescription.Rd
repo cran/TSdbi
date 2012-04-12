@@ -38,9 +38,6 @@
 \alias{TSmeta,ANY,missing-method}
 \alias{TSmeta<-}
 
-\alias{TSexists}
-\alias{TSexists,default-method}
-
 \alias{TSrefperiod}
 \alias{TSrefperiod,default-method}
 \alias{TSrefperiod<-}
@@ -49,12 +46,6 @@
 \title{Specific Methods for Documenting Data}
 \description{See the generic function description.}
 \usage{
-    TSexists(serIDs, con=getOption("TSconnection"),
-	vintage=getOption("TSvintage"), panel=getOption("TSpanel"), ...)
-    \S4method{TSexists}{default}(
-	serIDs, con=getOption("TSconnection"),
-	vintage=getOption("TSvintage"), panel=getOption("TSpanel"), ...)
-
     TSmeta(x, con=getOption("TSconnection"), ...) 
     \S4method{TSmeta}{character,missing}(x, con=getOption("TSconnection"), ...)
     \S4method{TSmeta}{character,ANY}(x, con=getOption("TSconnection"), ...)
@@ -101,10 +92,6 @@
 \arguments{
     \item{con}{A database connection.}
     \item{serIDs}{identifiers for series on the database.}
-    \item{vintage}{character string indicating vintage of the series on the 
-        database (if supported by the database).}
-    \item{panel}{character string indicating panel of the series on the 
-        database (if supported by the database).}
     \item{x}{a time series data object or an identifier for a series on the database.}
     \item{value}{a character string (or vector of character strings).}
     \item{...}{arguments passed to other methods.}
@@ -116,20 +103,18 @@ with \code{con} and \code{serIDs} (sometimes identifiers are passed as
 argument \code{x}) get data from the database. Others extract
 information from the object.
 
-\code{TSexists} returns TRUE or FALSE, depending on whether the series exist
-at the connection. (All series specified must exist for TRUE.)
+Assignments assign an attribute to the object \code{x} with value. If 
+\code{x} is a multivariate time series (matrix) then \code{value} should
+be a vector of length equal the number of series. The reference period for
+a time series indicates a special refence point (e.g. "Wednesday" for weekly
+data collected on Wednesday).
 
-    Assignments assign an attribute to the object \code{x} with value. If 
-    \code{x} is a multivariate time series (matrix) then \code{value} should
-    be a vector of length equal the number of series. The reference period for
-    a time series indicates a special refence point (e.g. "Wednesday" for weekly
-    data collected on Wednesday).
-    
-    The extraction methods extract the attribute.
-    }
+The extraction methods extract the attribute.
+}
 \seealso{
-    \code{\link{TSget}}
-    \code{\link{TSput}}
+    \code{\link{TSget}},
+    \code{\link{TSput}},
+    \code{\link{TSexists}},
     \code{\link{TSdates}}
     }
 
