@@ -1,6 +1,6 @@
 Package: TSdbi
-Version: 2012.4-1
-Title: Time Series Database Interface
+Version: 2012.8-1
+Title: TSdbi (Time Series Database Interface)
 Description: TSdbi provides a common interface to time series
         databases. The objective is to define a standard interface so
         users can retrieve time series data from various sources with a
@@ -14,10 +14,12 @@ Description: TSdbi provides a common interface to time series
         handle vintages of time series data (sometime called editions
         or realtime data). There is also a (not yet well tested)
         mechanism to handle multilingual data documentation.
+        Comprehensive examples of all the TS* packages is provided in
+        the vignette Guide.pdf with the TSdata package.
 Depends: R (>= 2.8.0), methods, tframe (>= 2008.5-1)
 Imports: methods, DBI
 Suggests: zoo, tseries, tis, tfplot, tframePlus
-BuildVignettes: false
+BuildVignettes: true
 License: GPL-2
 Copyright: 2007-2011 Bank of Canada.  2012 Paul Gilbert.
 Author: Paul Gilbert <pgilbert.ttv9z@ncf.ca>
@@ -25,6 +27,7 @@ Maintainer: Paul Gilbert <pgilbert.ttv9z@ncf.ca>
 URL: http://tsdbi.r-forge.r-project.org/
 Repository: CRAN
 Repository/R-Forge/Project: tsdbi
-Repository/R-Forge/Revision: 334
-Packaged: 2012-04-12 16:26:16 UTC; rforge
-Date/Publication: 2012-05-03 05:59:34
+Repository/R-Forge/Revision: 378
+Repository/R-Forge/DateTimeStamp: 2012-09-29 23:37:28
+Date/Publication: 2012-10-01 19:37:25
+Packaged: 2012-09-30 02:19:51 UTC; rforge

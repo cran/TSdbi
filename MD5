@@ -1,7 +1,7 @@
-02941c3a88a61f0bd95ac46f1d578bb4 *DESCRIPTION
+5932a4ea60902c3d4cf323977d02c562 *DESCRIPTION
 1d016bdb152bc6e370c4030eb032cf8b *NAMESPACE
-b1f4481faff8b5529253ea7abb6cecbb *NEWS
-6a81b9306a7555a17987eda80940df1c *R/TSdbi.R
+058dd9049c9d5eee9483baa517061009 *NEWS
+ccf72c696422ceb73f5c06317ca2ff0a *R/TSdbi.R
 1bbbf2d4837fbbd4871e2efeab833e28 *R/TSquery.R
 7f58eedf877b662c1bdb1b20cceac2a5 *README
 33b197664c4866a5dc9dcb4cbf62aab5 *inst/TSsql/CreateTables.TSsql
@@ -10,7 +10,8 @@ a067dc5b46c8ba4e84fb884745edb360 *inst/TSsql/Populate.TSsql
 1c81f9c95018b781218c8487b4d90537 *inst/TSsql/TSdbi.TSsql
 6c75650ed17a7b0af3f727515491bf60 *inst/TSsql/dbGetQuery.TSsql
 e53a18699f0126006ae5ea95381689fe *inst/TSsql/vintages.TSsql
-a20a5cebe8228f943f28a37fa709023c *inst/doc/Guide.pdf
+7e94053297668f0f568d63f71a4abb56 *inst/doc/Guide.Stex
+50ec9bed9d9256c29d77efbf296e2b6e *inst/doc/Guide.pdf
 62cfcc585b45adf064e9deb77320fdf9 *man/TScheckdbi.Rd
 5e093380096d5f09a407984f85ef8b2a *man/TSconnect.Rd
 5e42d5149748aec4c53d8a5e41d60ab6 *man/TSdates.Rd
@@ -26,4 +27,4 @@ b499e75c02c37b580b4a32a6cadf7a38 *man/TSvintages.Rd
 45d94d6c7b53e8d74d21f0165ef91a7f *man/dropTStable.Rd
 608e627d4a3a34daa5d88fd5651eca36 *man/internal.Rd
 da9b6748317c21fb1ff6b2d3cfa705e8 *man/standardSQL.Rd
-41583b71b8107241e1a58d502642ef48 *vignettes/Guide.Stex
+7e94053297668f0f568d63f71a4abb56 *vignettes/Guide.Stex
