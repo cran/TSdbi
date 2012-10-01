@@ -716,6 +716,13 @@ TSgetSQL <- function(serIDs, con, TSrepresentation=getOption("TSrepresentation")
             " failed. (Result empty for query: ",
 	     qq, ") Series does not exist on database.")
 
+    if(1 < NROW(q$tbl)){
+       warning("Meta lookup for series ", serIDs[i], 
+            " returned multiple table entries ", q$tbl, ". query: ",
+	     qq, ") Possible database corruption. Using the first table.")
+	q <- q[1,]
+	}
+
     if  (i == 1) {
        tbl <- q$tbl
        useZoo <- if ((TSrepresentation == "zoo") | 
@@ -847,17 +854,23 @@ TSdatesSQL <- function(serIDs, con,
   vintage <- realVintage(con, vintage, serIDs)
   panel   <- realPanel(con,panel)
   for (i in seq(length(serIDs))) {
-    q <- dbGetQuery(con, paste("SELECT id, tbl, refperiod  FROM Meta ", 
-                    setWhere(con, serIDs[i], vintage[i], panel), ";", sep=""))
-    if(is.null(q) || nrow(q) == 0) {
+    qq <- paste("SELECT id, tbl, refperiod  FROM Meta ", 
+                    setWhere(con, serIDs[i], vintage[i], panel), ";", sep="")
+    q <- dbGetQuery(con, qq)
+    if(is.null(q) || NROW(q) == 0) {
         av <- c(av, FALSE)
 	st <- append(st, list(NA))
 	en <- append(en, list(NA))
 	tb <- rbind(tb, NA)
 	rP <- rbind(rP, NA)
 	}
-    else if(nrow(q) > 1)
-      warning("More than one series with the same identifier. Possible database corruption.")
+    else if(NROW(q) > 1){
+      warning("More than one series with the same identifier. Possible database corruption.",
+        " Meta lookup for series ", serIDs[i], " vintage ", vintage[i], 
+            " returned multiple entries ", q, " for query: ",
+	     qq, " Possible database corruption. Using the first table.")
+	q <- q[1,]
+	}
     else  {
       q2 <-  TSget(serIDs=serIDs[i], con, vintage=vintage, panel=panel)
       av <- c(av, TRUE)

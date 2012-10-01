@@ -9,6 +9,14 @@ Known BUGS
    o	There is a warning message about ambiguous slot choice in the integer 
 	coercion of the connection con. (This is a bug in DBI packages.)
 
+Changes in TSdbi version 2012.8-1
+
+   o	Modified Title in DESCRIPTION file so TSdbi packages will be more
+   	clearly related on CRAN listing.
+
+   o	Added a warning message about database corruption in the case a series
+   	id returns multiple tables.
+
 Changes in TSdbi version 2012.4-1
 
    o	Added tfplot to Suggests in DESCRIPTION.
