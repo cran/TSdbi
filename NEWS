@@ -9,6 +9,12 @@ Known BUGS
    o	There is a warning message about ambiguous slot choice in the integer 
 	coercion of the connection con. (This is a bug in DBI packages.)
 
+Changes in TSdbi version 2013.3-1
+
+   o	Removed references to TSpadi as it has been archived from CRAN. It is 
+   	supersceded by TSfame.
+
+
 Changes in TSdbi version 2012.8-1
 
    o	Modified Title in DESCRIPTION file so TSdbi packages will be more

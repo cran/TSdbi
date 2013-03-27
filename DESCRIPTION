@@ -1,5 +1,5 @@
 Package: TSdbi
-Version: 2012.8-1
+Version: 2013.3-1
 Title: TSdbi (Time Series Database Interface)
 Description: TSdbi provides a common interface to time series
         databases. The objective is to define a standard interface so
@@ -27,7 +27,8 @@ Maintainer: Paul Gilbert <pgilbert.ttv9z@ncf.ca>
 URL: http://tsdbi.r-forge.r-project.org/
 Repository: CRAN
 Repository/R-Forge/Project: tsdbi
-Repository/R-Forge/Revision: 378
-Repository/R-Forge/DateTimeStamp: 2012-09-29 23:37:28
-Date/Publication: 2012-10-01 19:37:25
-Packaged: 2012-09-30 02:19:51 UTC; rforge
+Repository/R-Forge/Revision: 421
+Repository/R-Forge/DateTimeStamp: 2013-03-27 20:12:20
+Date/Publication: 2013-03-28 15:26:44
+Packaged: 2013-03-27 23:16:16 UTC; rforge
+NeedsCompilation: no
