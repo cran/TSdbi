@@ -901,7 +901,7 @@ print.TSdates   <- function(x, ...) {
    av <-  attr(x, "TSdates")    # a logical indicator of availability
    st <-  attr(x, "start")
    en <-  attr(x, "end")  
-   fr <-  attr(x, "frequency")  # used by TSpadi and possibly elsewhere
+   fr <-  attr(x, "frequency")  # used by defunct TSpadi, possibly elsewhere
    tb <-  attr(x, "tbl")  
    rP <-  attr(x, "TSrefperiod")
    for (i in 1:length(x)) {
@@ -957,7 +957,7 @@ setGeneric("TSexists", valueClass="logicalId",
 # this method will generally not be needed by users, but is used in the test
 # database setup. It needs to be generic in order to work around the problem
 # that different db engines treat capitalized table names differently.
-# e.g. MySQL uses table name Meta while Posgresql converts to meta.
+# e.g. MySQL uses table name Meta while PostgreSQL converts to meta.
 # A default con is not used on purpose.
 
 setGeneric("dropTStable",
@@ -966,7 +966,7 @@ setGeneric("dropTStable",
 
 ########## little utilities #######
 
-TSfinddb <- function(dbname=NULL, driverOrder=c("MySQL", "SQLite", "padi")) {
+TSfinddb <- function(dbname=NULL, driverOrder=c("MySQL", "SQLite", "PostgreSQL")) {
   if(is.null(dbname)) stop("dbname must be supplied.")
   ok <- FALSE
   for (s in driverOrder) {

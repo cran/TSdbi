@@ -6,10 +6,10 @@
 \title{Time Series Data Base Interface}
 
 \description{TSdbi provides an common interface to 
-time series databases. The package can use the DBI package and its interface to
-SQL databases, in which case a table structure is specified by TSdbi. 
-It can also be used as an interface to Fame databases (through the padi
-protoocol for now, but directly should be possible with some work).
+time series databases. Several of these are databases available over the Internet.
+Others are packages that use the DBI package interface to
+SQL databases. For these a table structure is specified by TSdbi. 
+TSdbi can also be used as an interface to Fame databases through TSfame.
 }
 
 \details{
@@ -33,7 +33,7 @@ TSdoc	 	Extract the documentation for a series.
 }
 
 Use of this package requires one of the interface packages (e. g. 
-\pkg{TSSQLite}, \pkg{TSMySQL}, \pkg{TSpadi}) 
+\pkg{TSSQLite}, \pkg{TSMySQL}, \pkg{TSPostgreSQL}) 
 An overview of how to use the package is (will be) available in vignettes.
 Using \pkg{TSdbi} is very similar for the different database interfaces, 
 but building vignettes requires working code so the vignettes  are included 
@@ -59,5 +59,5 @@ Maintainer: Paul Gilbert <pgilbert.ttv9z@ncf.ca>
    \code{\link[DBI]{dbConnect}}, 
    \code{\link[TSSQLite]{TSdbiMethods}}, 
    \code{\link[TSMySQL]{TSdbiMethods}}, 
-   \code{\link[TSpadi]{TSdbiMethods}}, 
+   \code{\link[TSPostgreSQL]{TSdbiMethods}}, 
 }

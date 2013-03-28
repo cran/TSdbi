@@ -4,7 +4,7 @@
 \title{Find a Time Series Database Connection}
 \description{Find a connection to a specified time series database.}
 \usage{
-    TSfinddb(dbname=NULL, driverOrder=c("MySQL", "SQLite", "padi")) 
+    TSfinddb(dbname=NULL, driverOrder=c("MySQL", "SQLite", "PostgreSQL")) 
 }
 \arguments{
     \item{dbname}{Character string indicating the name of a database.}
@@ -15,7 +15,7 @@
 \details{\code{TSfinddb} tries to establish a connection to the indicated 
 database using the drivers in the order specified. This attempt also requires
 the corresponding TSdbi driver package (e.g., "TSMySQL", "TSSQLite", or
-"TSpadi"). If the package cannot be loaded then the driver is skipped.
+"TSPostgreSQL"). If the package cannot be loaded then the driver is skipped.
 The first valid connection is returned. If no valid connection is found 
 then NULL is returned.
 }
