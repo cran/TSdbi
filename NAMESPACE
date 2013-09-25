@@ -11,8 +11,7 @@ export(
   "TSfinddb",
   "TSseriesIDs",
   "TScon",
-  "TSextractionDate",
-  "TSquery"
+  "TSextractionDate"
   )
 
 ## S4 Classes
@@ -64,8 +63,7 @@ exportMethods(
    "TSdates",
    "TSdescription",
    "TSdoc",
-   "TSvintages",
-   "dropTStable"
+   "TSvintages"
    )
 
 #S3method("print","TSmeta")

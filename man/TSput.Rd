@@ -77,7 +77,7 @@
     need to be specified in calls to \code{TSput} and \code{TSreplace}.
 
 \code{TSdescription} and \code{TSdoc}can also be set.
-(Passed in \dots). See \code{\link{TSputSQL}} for more details.
+(Passed in \dots). 
 
 If an appropriate table cannot be determined from the series it will be
 necessary to pass the \code{Table} argument (in \dots). 
@@ -101,8 +101,7 @@ Meta  for meta data
     \code{\link{TSdbi-package}},
     \code{\link{TSdates}},
     \code{\link{TSget}},
-    \code{\link{TSputSQL}},
-    \code{\link[DBI]{dbConnect}}
+     \code{\link[DBI]{dbConnect}}
 }
 \keyword{ts}
 

@@ -9,6 +9,20 @@ Known BUGS
    o	There is a warning message about ambiguous slot choice in the integer 
 	coercion of the connection con. (This is a bug in DBI packages.)
 
+Changes in TSdbi version 2013.9-1
+
+   o	Split TSsql from TSdbi to cleanup export of SQL utility functions.
+
+Changes in TSdbi version 2013.8-2
+
+   o	Added functions createTSdbTables() and removeTSdbTables() and arranged
+   	tests and examples so that test database tables are cleaned up (removed).
+
+   o	Adjusted Depends and Imports in DESCRIPTION file.
+
+   o	Fixed bug when replacing muliple series: if not all existed then none
+   	where deleted before putting new versions in place.
+
 Changes in TSdbi version 2013.3-1
 
    o	Removed references to TSpadi as it has been archived from CRAN. It is 
