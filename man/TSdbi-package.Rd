@@ -8,7 +8,7 @@
 \description{TSdbi provides an common interface to 
 time series databases. Several of these are databases available over the Internet.
 Others are packages that use the DBI package interface to
-SQL databases. For these a table structure is specified by TSdbi. 
+SQL databases. For these a table structure is specified. 
 TSdbi can also be used as an interface to Fame databases through TSfame.
 }
 
@@ -34,7 +34,8 @@ TSdoc	 	Extract the documentation for a series.
 
 Use of this package requires one of the interface packages (e. g. 
 \pkg{TSSQLite}, \pkg{TSMySQL}, \pkg{TSPostgreSQL}) 
-An overview of how to use the package is (will be) available in vignettes.
+An overview of how to use the package is  available in the vignettes of the
+package \pkg{TSdata}.
 Using \pkg{TSdbi} is very similar for the different database interfaces, 
 but building vignettes requires working code so the vignettes  are included 
 in the various interface packages.  For the same reason, most examples and 
