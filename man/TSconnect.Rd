@@ -12,27 +12,29 @@
 \title{Connect to a Time Series Database}
 \description{Return a connection to a time series database}
 \usage{
-    TSconnect(drv, dbname, ...)
-    \S4method{TSconnect}{character,character}(drv, dbname, ...)
+    TSconnect(q, dbname, ...)
+    \S4method{TSconnect}{character,character}(q, dbname, ...)
     \S4method{show}{logicalId}(object)
     \S4method{show}{TSdb}(object)
     \S4method{show}{TSmeta}(object)
     \S4method{print}{TSdb}(x, ...)
 }
 \arguments{
-    \item{drv}{A database connection driver or character string.}
+    \item{q}{A character string indicating the query interface to use, or
+         a database connection object.}
     \item{dbname}{The name of the database to which the connection should be
-         established}
+         established, omitted if \code{q} is a database connection object.}
     \item{x}{A database connection as returned by TSconnect.}
     \item{object}{an object to display.}
-    \item{...}{Additional arguments passed to other print methods.}
+    \item{...}{Additional arguments passed to other methods. For TSconnect
+         these will be passed to the database driver.}
 }
 \value{A database connection.}
 \details{
 This function establishes a connection using a driver from one of the driver
-packages (e.g. \pkg{TSMySQL} or \pkg{TSSQLite}). If \code{drv} is a character
-string (e.g. \code{"MySQL"}) then the method attempts to get a driver using the
-character string.
+packages (e.g. \pkg{TSMySQL} or \pkg{TSSQLite}). If \code{q} is a character
+string (e.g. \code{"MySQL"}) then the method attempts to get a connection 
+using the character string.
 
 \code{"TSconnect"} uses \code{dbConnect} but checks the database
 has expected tables and also establishes

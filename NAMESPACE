@@ -25,6 +25,7 @@ exportClasses(
 
 ## S4 generics
 export(
+   "dbDisconnect", ## from DBI
    ##"print",
    ##"show",
    "TSconnect",

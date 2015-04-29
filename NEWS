@@ -6,8 +6,21 @@ See also
    
 Known BUGS
 
-   o	There is a warning message about ambiguous slot choice in the integer 
-	coercion of the connection con. (This is a bug in DBI packages.)
+   o	None for the moment.
+
+Changes in TSdbi version 2015.1-1
+
+   o	Added export of dbDisconnect.
+
+   o	Update class definitions to use slots= rather than representation().
+
+   o	Bumped requirement for DBI up to version 0.3.1 or greater.
+
+   o	Adjusted TSconnect() to use a string or a connection in place of a
+   	driver, and renamed argument drv to q to reflect this change.
+
+   o	Some tweaks to TSfinddb() for new versions of database packages
+   	using new version of DBI.
 
 Changes in TSdbi version 2013.9-1
 

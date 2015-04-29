@@ -28,29 +28,30 @@ using \code{options(TSconnection=con)}, so then only the series identifiers
 need to be specified in calls to \code{TSget}.
 
 The user can specify a default time series representation with the argument
-TSrepresentation="something" where "something" is "default" by default, but 
-might be "zoo" or something else which is used to coerce the representation.
+\code{TSrepresentation=something} where \code{something} is \code{"default"} by 
+default, but might be \code{"zoo", "its", "timeSeries"} or a function which is 
+used to coerce the series to any representation.
 The \code{TSrepresentation} is passed in the \dots argument. 
-The conversion is done with the function \code{changeTSrepresentation}.
-If the representation is a character string then it is applied using \code{do.call(TSrepresentation, list(mat, dates))}
-where \code{mat} is the time series (matrix) to be return and dates are
-determined by \code{as.Date(time(x))} where \code{x} is the default representation of the data. If representation is not a character string 
-then it should be
-a function and is applied using \code{TSrepresentation(mat, dates)}
+If \code{TSrepresentation} is a function it will be applied directly to the
+default returned by the query. The default is usually  \code{ts} for monthly, 
+quarterly, annual, and semi-annual data, and  \code{zoo} otherwise, but the 
+default may be different for some \code{TSget} methods. The conversion is 
+done with the function \code{tframePlus::changeTSrepresentation}.
+The user should attach any package necessary for dealing with the representation.
 
-If \code{TSrepresentation} is not specified, or is specified as "default",
+If \code{TSrepresentation} is not specified, or is specified as \code{"default"},
 then for SQL packages (\pkg{TSMySQL}, \pkg{TSPostgreSQL }, \pkg{TSSQLite}, etc)
 the \code{ts} representation is used for data from tables 
 "A", "Q", "M","S" and \code{zoo} otherwise. See \code{\link{TSput}} for a
-list of the various tables. For other packages the default is zoo in most cases,
-but may vary.
+list of the various tables. For other packages the default is generally the same,
+or \code{zoo} for all series, but this may vary.
 
 It would be possible to specify \code{TSrepresentation="as.zoo"}, but this may
 result in \code{as.zoo} being applied twice, in which case some information 
-abut the time representation gets lost, so the best way to get a \code{zoo}
+about the time representation gets lost, so the best way to get a \code{zoo}
 represenation is to specify \code{TSrepresentation="zoo"}.
 
-Users can set a session default with \code{options(TSrepresentation="something")}
+Users can set a session default with \code{options(TSrepresentation=something)}
 so that this is always passed as an argument to \code{TSget}. 
 
 It is also possible to pass start, end, or tframe information to truncate the

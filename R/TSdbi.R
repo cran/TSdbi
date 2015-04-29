@@ -5,30 +5,29 @@ setClassUnion("OptionalPOSIXct",   c("POSIXct",   "logical"))
 
 # inherit this into TSconnections so methods can abstract  from
 #   specific drivers 
-setClass("conType", representation( drv="character"), "VIRTUAL" )
+setClass("conType", slots = c( q="character"), contains="VIRTUAL" )
 
 # this just has db info
-setClass("TSdb", representation( dbname="character", 
-    hasVintages="logical", hasPanels="logical"), "VIRTUAL" )
+setClass("TSdb", slots = c( dbname="character", 
+    hasVintages="logical", hasPanels="logical"),  contains="VIRTUAL" )
 
 #The connection type is the class of an actual connection, which includes the
 # above virtual class. The conType in next TSid duplicates this, but otherwise
 # I don't see how to put the info in the TSid.
 
 # this has serIDs as well as there source db (so could be used to retrieve data)
-setClass("TSid",  contains="TSdb", representation(serIDs="character", 
+setClass("TSid",  contains="TSdb", slots = c(serIDs="character", 
                      conType="character",DateStamp="OptionalPOSIXct")) 
 
 # TSmeta has serIDs and source db (in TSid) as well as documentation
 setClassUnion("OptionalChar",   c("character",   "logical"))
 #  NA is logical so this allows NA
 setClass("TSmeta", contains="TSid", 
-  representation(TSdescription="OptionalChar",    TSdoc="OptionalChar",
-                       TSlabel="OptionalChar", TSsource="OptionalChar")) 
+  slots = c(TSdescription="OptionalChar",    TSdoc="OptionalChar",
+                  TSlabel="OptionalChar", TSsource="OptionalChar")) 
 
 # this is a logical but has TSid (so could be used to retrieve data)
-setClass("logicalId", contains="logical",
-            representation=representation(TSid="TSid")) 
+setClass("logicalId", contains="logical", slots = c(TSid="TSid")) 
 
 setGeneric("TSmeta", def= function(x, con=getOption("TSconnection"), ...)
     standardGeneric("TSmeta"))
@@ -91,11 +90,16 @@ setGeneric("TSmeta<-",
 #    invisible(x)
 #    })
 
-setGeneric("TSconnect", def= function(drv, dbname, ...) standardGeneric("TSconnect"))
+setGeneric("TSconnect", def= function(q, dbname, ...) standardGeneric("TSconnect"))
 
-setMethod("TSconnect",   signature(drv="character", dbname="character"),
-   definition=function(drv, dbname, ...)
-             TSconnect(dbDriver(drv), dbname=dbname, ...))
+# note that ... is passed to both the driver and to TSconnect in next
+setMethod("TSconnect",   signature(q="character", dbname="character"),
+   definition=function(q, dbname, ...)
+        TSconnect(dbConnect(get(q, mode="function")(...), dbname=dbname), ... ))
+
+# This would work above for DBI sql engines, but for others the TS* package needs to export
+#        TSconnect(dbConnect(getExportedValue(paste("R", q,sep=""), q)(),
+#	           dbname=dbname) ))
 
 
 ######### TSdescription #########
@@ -486,21 +490,28 @@ setGeneric("TSexists", valueClass="logicalId",
 
 
 ########## little utilities #######
+# PostgreSQL and MySQL" failing with cannot coerce type 'S4' to vector of type 'integer'
 
 TSfinddb <- function(dbname=NULL, driverOrder=c("MySQL", "SQLite", "PostgreSQL")) {
   if(is.null(dbname)) stop("dbname must be supplied.")
+  org <- search()
   ok <- FALSE
   for (s in driverOrder) {
      pkg <- paste("TS", s,sep="")
      if(require(pkg, quietly = TRUE, character.only = TRUE)) {
-        m <- dbDriver(s)
-	con <- try(TSconnect(m, dbname), silent = TRUE)
+        con <- try(TSconnect(s, dbname), silent = TRUE)
         ok <- ! inherits(con, "try-error")
 	}
      if (ok) break
+     else {
+        z <- paste("package:TS", s, sep="")
+	if(! z %in% org) detach(z, character.only = TRUE)
+        z <- paste("package:R", s, sep="")
+	if(! z %in% org) detach(z, character.only = TRUE)
+        }
      } 
   if( inherits(con, "try-error")) {
-      warning(dbname, "not found.")
+      warning(dbname, " not found.")
       return(NULL)
       }
   else return(con)
