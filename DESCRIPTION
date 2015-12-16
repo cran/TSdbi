@@ -1,5 +1,5 @@
 Package: TSdbi
-Version: 2015.1-1
+Version: 2015.7-1
 Title: Time Series Database Interface
 Description: Provides a common interface to time series databases. The
 	objective is to define a standard interface so users can retrieve time 
@@ -25,6 +25,6 @@ Author: Paul Gilbert <pgilbert.ttv9z@ncf.ca>
 Maintainer: Paul Gilbert <pgilbert.ttv9z@ncf.ca>
 URL: http://tsdbi.r-forge.r-project.org/
 NeedsCompilation: no
-Packaged: 2015-04-25 18:13:07 UTC; paul
+Packaged: 2015-12-16 02:33:30 UTC; paul
 Repository: CRAN
-Date/Publication: 2015-04-29 16:08:21
+Date/Publication: 2015-12-16 23:32:22

@@ -8,6 +8,11 @@ Known BUGS
 
    o	None for the moment.
 
+Changes in TSdbi version 2015.7-1
+
+   o	Fixed bug passing server arguments in TSconnect, which was only using
+   	the driver configuration file and not any specified arguments.
+
 Changes in TSdbi version 2015.1-1
 
    o	Added export of dbDisconnect.
