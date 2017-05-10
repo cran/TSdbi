@@ -1,12 +1,11 @@
-cb3289eee691ded8b1bebe1c030f4400 *DESCRIPTION
+0cfbb408f912470ceba9b033ddb134e5 *DESCRIPTION
 d661df61ed0da7e5bca4ca0544ec80d3 *NAMESPACE
-d908fcb6df87e7aef6907f0a23da557d *NEWS
+99a97d674c63d919154c762babce96c3 *NEWS
 f605c395780ee5a96092cb812e4ce3f0 *R/TSdbi.R
 7f58eedf877b662c1bdb1b20cceac2a5 *README
-9ddb30f5d0b68b640a92b6d7aac04021 *build/vignette.rds
+c19dc083e7c1cde3e1b20c24caa3d31d *build/vignette.rds
 7e94053297668f0f568d63f71a4abb56 *inst/doc/Guide.Stex
-50ec9bed9d9256c29d77efbf296e2b6e *inst/doc/Guide.pdf
-62cfcc585b45adf064e9deb77320fdf9 *man/TScheckdbi.Rd
+8ec2b0c2a5584d7ac270ce9d58cebe0b *inst/doc/Guide.pdf
 04c0fce2ccc676615fed7ec31a4719a8 *man/TSconnect.Rd
 5e42d5149748aec4c53d8a5e41d60ab6 *man/TSdates.Rd
 22d76a26b40930681b4697b63dbce3b1 *man/TSdbi-package.Rd
